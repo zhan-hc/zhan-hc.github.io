@@ -1,2 +1,1 @@
-# zhan-hc.github.io
-博客
+zhan-hc.xyz
