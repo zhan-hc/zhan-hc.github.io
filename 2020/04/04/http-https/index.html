@@ -1,0 +1,312 @@
+<!DOCTYPE html><html lang="en" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>http和https | 前端笨鸟</title><meta name="keywords" content="http"><meta name="author" content="HC-ZHAN"><meta name="copyright" content="HC-ZHAN"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><meta name="description" content="http和https的概念 http常见的状态码 http和https的区别 https相对于http的改进 https的工作原理  http和https的概念HTTP协议是一种使用明文数据传输的网络协议。HTTPS协议可以理解为HTTP协议的升级，就是在HTTP的基础上增加了数据加密。在数据进行传输之前，对数据进行加密，然后再发送到服务器。  http常见的状态码   状态码 响应类别 原因">
+<meta property="og:type" content="article">
+<meta property="og:title" content="http和https">
+<meta property="og:url" content="http://example.com/2020/04/04/http-https/index.html">
+<meta property="og:site_name" content="前端笨鸟">
+<meta property="og:description" content="http和https的概念 http常见的状态码 http和https的区别 https相对于http的改进 https的工作原理  http和https的概念HTTP协议是一种使用明文数据传输的网络协议。HTTPS协议可以理解为HTTP协议的升级，就是在HTTP的基础上增加了数据加密。在数据进行传输之前，对数据进行加密，然后再发送到服务器。  http常见的状态码   状态码 响应类别 原因">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/2020/04/04/http-https/http.jpg">
+<meta property="article:published_time" content="2020-04-04T14:36:03.000Z">
+<meta property="article:modified_time" content="2020-12-13T14:56:22.615Z">
+<meta property="article:author" content="HC-ZHAN">
+<meta property="article:tag" content="http">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2020/04/04/http-https/http.jpg"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://example.com/2020/04/04/http-https/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><script>var GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true},
+  copy: {
+    success: 'Copy successfully',
+    error: 'Copy error',
+    noSupport: 'The browser does not support'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: 'Just',
+    min: 'minutes ago',
+    hour: 'hours ago',
+    day: 'days ago',
+    month: 'months ago'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    jQuery: 'https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js',
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+    },
+    fancybox: {
+      js: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isanchor: false
+};
+
+var saveToLocal = {
+  set: function setWithExpiry(key, value, ttl) {
+    const now = new Date()
+    const expiryDay = ttl * 86400000
+    const item = {
+      value: value,
+      expiry: now.getTime() + expiryDay,
+    }
+    localStorage.setItem(key, JSON.stringify(item))
+  },
+
+  get: function getWithExpiry(key) {
+    const itemStr = localStorage.getItem(key)
+
+    if (!itemStr) {
+      return undefined
+    }
+    const item = JSON.parse(itemStr)
+    const now = new Date()
+
+    if (now.getTime() > item.expiry) {
+      localStorage.removeItem(key)
+      return undefined
+    }
+    return item.value
+  }
+}
+
+// https://stackoverflow.com/questions/16839698/jquery-getscript-alternative-in-native-javascript
+const getScript = url => new Promise((resolve, reject) => {
+  const script = document.createElement('script')
+  script.src = url
+  script.async = true
+  script.onerror = reject
+  script.onload = script.onreadystatechange = function() {
+    const loadState = this.readyState
+    if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+    script.onload = script.onreadystatechange = null
+    resolve()
+  }
+  document.head.appendChild(script)
+})</script><script id="config_change">var GLOBAL_CONFIG_SITE = { 
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2020-12-13 22:56:22'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(function () {  window.activateDarkMode = function () {
+    document.documentElement.setAttribute('data-theme', 'dark')
+    if (document.querySelector('meta[name="theme-color"]') !== null) {
+      document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+    }
+  }
+  window.activateLightMode = function () {
+    document.documentElement.setAttribute('data-theme', 'light')
+   if (document.querySelector('meta[name="theme-color"]') !== null) {
+      document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+    }
+  }
+  const autoChangeMode = 'false'
+  const t = saveToLocal.get('theme')
+  if (autoChangeMode === '1') {
+    const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
+    const isLightMode = window.matchMedia('(prefers-color-scheme: light)').matches
+    const isNotSpecified = window.matchMedia('(prefers-color-scheme: no-preference)').matches
+    const hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
+    if (t === undefined) {
+      if (isLightMode) activateLightMode()
+      else if (isDarkMode) activateDarkMode()
+      else if (isNotSpecified || hasNoSupport) {
+        const now = new Date()
+        const hour = now.getHours()
+        const isNight = hour <= 6 || hour >= 18
+        isNight ? activateDarkMode() : activateLightMode()
+      }
+      window.matchMedia('(prefers-color-scheme: dark)').addListener(function (e) {
+        if (saveToLocal.get('theme') === undefined) {
+          e.matches ? activateDarkMode() : activateLightMode()
+        }
+      })
+    } else if (t === 'light') activateLightMode()
+    else activateDarkMode()
+  } else if (autoChangeMode === '2') {
+    const now = new Date()
+    const hour = now.getHours()
+    const isNight = hour <= 6 || hour >= 18
+    if (t === undefined) isNight ? activateDarkMode() : activateLightMode()
+    else if (t === 'light') activateLightMode()
+    else activateDarkMode()
+  } else {
+    if (t === 'dark') activateDarkMode()
+    else if (t === 'light') activateLightMode()
+  }const asideStatus = saveToLocal.get('aside-status')
+if (asideStatus !== undefined) {
+   if (asideStatus === 'hide') {
+     document.documentElement.classList.add('hide-aside')
+   } else {
+     document.documentElement.classList.remove('hide-aside')
+   }
+}})()</script><meta name="generator" content="Hexo 5.2.0"><link rel="alternate" href="/atom.xml" title="前端笨鸟" type="application/atom+xml">
+</head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="author-avatar"><img class="avatar-img" src="/img/avatar.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data"><div class="data-item is-center"><div class="data-item-link"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">16</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/tags/"><div class="headline">Tags</div><div class="length-num">13</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/categories/"><div class="headline">Categories</div><div class="length-num">8</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><span> Categories</span></a></div></div></div></div><div id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(/2020/04/04/http-https/http.jpg)"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">前端笨鸟</a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><span> Categories</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">http和https</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">Created</span><time class="post-meta-date-created" datetime="2020-04-04T14:36:03.000Z" title="Created 2020-04-04 22:36:03">2020-04-04</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">Updated</span><time class="post-meta-date-updated" datetime="2020-12-13T14:56:22.615Z" title="Updated 2020-12-13 22:56:22">2020-12-13</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">Post View:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><ul>
+<li>http和https的概念</li>
+<li>http常见的状态码</li>
+<li>http和https的区别</li>
+<li>https相对于http的改进</li>
+<li>https的工作原理</li>
+</ul>
+<h2 id="http和https的概念"><a href="#http和https的概念" class="headerlink" title="http和https的概念"></a>http和https的概念</h2><p><strong>HTTP协议</strong>是一种使用明文数据传输的网络协议。<br><strong>HTTPS协议</strong>可以理解为HTTP协议的升级，就是在HTTP的基础上增加了数据加密。在数据进行传输之前，对数据进行加密，然后再发送到服务器。</p>
+<hr>
+<h2 id="http常见的状态码"><a href="#http常见的状态码" class="headerlink" title="http常见的状态码"></a>http常见的状态码</h2><table>
+<thead>
+<tr>
+<th align="center">状态码</th>
+<th align="center">响应类别</th>
+<th align="center">原因</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">1XX</td>
+<td align="center">信息性状态码(Informational)</td>
+<td align="center">服务器正在处理请求</td>
+</tr>
+<tr>
+<td align="center">2XX</td>
+<td align="center">成功状态码(Success)</td>
+<td align="center">请求已正常处理完毕</td>
+</tr>
+<tr>
+<td align="center">3XX</td>
+<td align="center">重定向状态码(Redirection)</td>
+<td align="center">需要进行额外操作以完成请求</td>
+</tr>
+<tr>
+<td align="center">4XX</td>
+<td align="center">客户端错误状态码(Client Error)</td>
+<td align="center">客户端原因导致服务器无法处理请求</td>
+</tr>
+<tr>
+<td align="center">5XX</td>
+<td align="center">服务器错误状态码（Server Error)</td>
+<td align="center">服务器原因导致处理请求出错</td>
+</tr>
+</tbody></table>
+<h3 id="1xx（信息）"><a href="#1xx（信息）" class="headerlink" title="1xx（信息）"></a>1xx（信息）</h3><blockquote>
+<p><strong>100 Continue</strong><br>继续。客户端应继续其请求<br><strong>101 Switching Protocols</strong><br>切换协议。服务器根据客户端的请求切换协议。只能切换到更高级的协议，例如，切换到HTTP的新版本协议</p>
+</blockquote>
+<h3 id="2xx（成功）"><a href="#2xx（成功）" class="headerlink" title="2xx（成功）"></a>2xx（成功）</h3><blockquote>
+<p><strong>200 OK</strong><br>表示请求被服务器正常处理<br><strong>201 Creanted</strong><br>已创建。成功请求并创建了新的资源<br><strong>202 Accepted</strong><br>已接受。已经接受请求，但未处理完成<br><strong>203 Non-Authoritative Information</strong><br>非授权信息。请求成功。但返回的meta信息不在原始的服务器，而是一个副本<br><strong>204 No Content</strong><br>表示请求已成功处理，但是没有内容返回（就应该没有内容返回的状况）<br><strong>205 Reset Content</strong><br>重置内容。服务器处理成功，用户终端（例如：浏览器）应重置文档视图。可通过此返回码清除浏览器的表单域<br><strong>206 Partial Content</strong><br>表示服务器已经完成了部分GET请求（客户端进行了范围请求）</p>
+</blockquote>
+<h3 id="3xx（重定向）"><a href="#3xx（重定向）" class="headerlink" title="3xx（重定向）"></a>3xx（重定向）</h3><blockquote>
+<p><strong>301 Moved Permanently</strong><br>永久重定向，表示请求的资源已经永久的搬到了其他位置<br><strong>302 Found</strong><br>临时重定向，表示请求的资源临时搬到了其他位置<br><strong>303 See Other</strong><br>表示请求资源存在另一个URI，应使用GET定向获取请求资源<br><strong>304 Not Modified</strong><br>表示客户端发送附带条件的请求（GET方法请求报文中的IF…）时，条件不满足<br><strong>307 Temporary Redirect</strong><br>临时重定向，和302有着相同含义</p>
+</blockquote>
+<h3 id="4xx（客户端错误）"><a href="#4xx（客户端错误）" class="headerlink" title="4xx（客户端错误）"></a>4xx（客户端错误）</h3><blockquote>
+<p><strong>400 Bad Request</strong><br>表示请求报文存在语法错误或参数错误，服务器不理解<br><strong>401 Unauthorized</strong><br>表示发送的请求需要有HTTP认证信息或者是认证失败了<br><strong>403 Forbidden</strong><br>表示对请求资源的访问被服务器拒绝了<br><strong>404 Not Found</strong><br>表示服务器找不到你请求的资源</p>
+</blockquote>
+<h3 id="5xx（服务器错误）"><a href="#5xx（服务器错误）" class="headerlink" title="5xx（服务器错误）"></a>5xx（服务器错误）</h3><blockquote>
+<p><strong>500 Internal Server Error</strong><br>表示服务器执行请求的时候出错了<br><strong>503 Service Unavailable</strong><br>表示服务器超负载或正停机维护，无法处理请求</p>
+</blockquote>
+<hr>
+<h2 id="http和https的区别"><a href="#http和https的区别" class="headerlink" title="http和https的区别"></a>http和https的区别</h2><table>
+<thead>
+<tr>
+<th align="center">协议</th>
+<th align="center">数据加密传输(本质区别)</th>
+<th align="center">传输协议</th>
+<th align="center">端口</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">HTTP</td>
+<td align="center">无</td>
+<td align="center">超文本传输协议</td>
+<td align="center">80</td>
+</tr>
+<tr>
+<td align="center">HTTPS</td>
+<td align="center">有</td>
+<td align="center">ssl加密传输协议</td>
+<td align="center">443</td>
+</tr>
+</tbody></table>
+<h2 id="https相对于http的改进"><a href="#https相对于http的改进" class="headerlink" title="https相对于http的改进"></a>https相对于http的改进</h2><p><strong>1.双向的身份认证</strong></p>
+<blockquote>
+<p>客户端和服务端在传输数据之前,会通过基于X.509证书对双方进行身份认证 。</p>
+</blockquote>
+<p><strong>2.数据传输的机密性</strong></p>
+<blockquote>
+<p>客户端和服务端在开始传输数据之前，会协商传输过程需要使用的加密算法。</p>
+</blockquote>
+<p><strong>3.防止重放攻击</strong></p>
+<blockquote>
+<p>SSL使用序列号来保护通讯方免受报文重放攻击。这个序列号被加密后作为数据包的负载。在整个SSL握手中,都有一个唯一的随机数来标记SSL握手。 这样防止了攻击者嗅探整个登录过程，获取到加密的登录数据之后，不对数据进行解密, 而直接重传登录数据包的攻击手法。</p>
+</blockquote>
+<h2 id="https的工作原理"><a href="#https的工作原理" class="headerlink" title="https的工作原理"></a>https的工作原理</h2><ol>
+<li>客户使用https的URL访问Web服务器，要求与Web服务器建立SSL连接。</li>
+<li>Web服务器收到客户端请求后，会将网站的证书信息（证书中包含公钥）传送一份给客户端。</li>
+<li>客户端的浏览器与Web服务器开始协商SSL连接的安全等级，也就是信息加密的等级。</li>
+<li>客户端的浏览器根据双方同意的安全等级，建立会话密钥，然后利用网站的公钥将会话密钥加密，并传送给网站。</li>
+<li>Web服务器利用自己的私钥解密出会话密钥。</li>
+<li>Web服务器利用会话密钥加密与客户端之间的通信。</li>
+</ol>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">Author: </span><span class="post-copyright-info"><a href="mailto:undefined">HC-ZHAN</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">Link: </span><span class="post-copyright-info"><a href="http://example.com/2020/04/04/http-https/">http://example.com/2020/04/04/http-https/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">Copyright Notice: </span><span class="post-copyright-info">All articles in this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless stating additionally.</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/http/">http</a></div><div class="post_share"><div class="social-share" data-image="/2020/04/04/http-https/http.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2020/05/18/array-unique/"><img class="prev-cover" src="/2020/05/18/array-unique/unique.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">Previous Post</div><div class="prev_info">js数组去重-ES6</div></div></a></div><div class="next-post pull-right"><a href="/2020/04/04/vue-scroll/"><img class="next-cover" src="/2020/04/04/vue-scroll/scroll.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">Next Post</div><div class="next_info">vue插件-BetterScroll使用</div></div></a></div></nav><hr/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> Comment</span></div></div><div class="comment-wrap"><div><div class="vcomment" id="vcomment"></div></div></div></div></div><div class="aside_content" id="aside_content"><div class="card-widget card-info"><div class="card-content"><div class="card-info-avatar is-center"><img class="avatar-img" src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/><div class="author-info__name">HC-ZHAN</div><div class="author-info__description">别说路不平,只是你不行</div></div><div class="card-info-data"><div class="card-info-data-item is-center"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">16</div></a></div><div class="card-info-data-item is-center"><a href="/tags/"><div class="headline">Tags</div><div class="length-num">13</div></a></div><div class="card-info-data-item is-center"><a href="/categories/"><div class="headline">Categories</div><div class="length-num">8</div></a></div></div><a class="button--animated" id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a></div></div><div class="card-widget card-announcement"><div class="card-content"><div class="item-headline"><i class="fas fa-bullhorn card-announcement-animation"></i><span>Announcement</span></div><div class="announcement_content">This is my Blog</div></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="card-content"><div class="item-headline"><i class="fas fa-stream"></i><span>Catalog</span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#http%E5%92%8Chttps%E7%9A%84%E6%A6%82%E5%BF%B5"><span class="toc-number">1.</span> <span class="toc-text">http和https的概念</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#http%E5%B8%B8%E8%A7%81%E7%9A%84%E7%8A%B6%E6%80%81%E7%A0%81"><span class="toc-number">2.</span> <span class="toc-text">http常见的状态码</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1xx%EF%BC%88%E4%BF%A1%E6%81%AF%EF%BC%89"><span class="toc-number">2.1.</span> <span class="toc-text">1xx（信息）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2xx%EF%BC%88%E6%88%90%E5%8A%9F%EF%BC%89"><span class="toc-number">2.2.</span> <span class="toc-text">2xx（成功）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3xx%EF%BC%88%E9%87%8D%E5%AE%9A%E5%90%91%EF%BC%89"><span class="toc-number">2.3.</span> <span class="toc-text">3xx（重定向）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4xx%EF%BC%88%E5%AE%A2%E6%88%B7%E7%AB%AF%E9%94%99%E8%AF%AF%EF%BC%89"><span class="toc-number">2.4.</span> <span class="toc-text">4xx（客户端错误）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5xx%EF%BC%88%E6%9C%8D%E5%8A%A1%E5%99%A8%E9%94%99%E8%AF%AF%EF%BC%89"><span class="toc-number">2.5.</span> <span class="toc-text">5xx（服务器错误）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#http%E5%92%8Chttps%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="toc-number">3.</span> <span class="toc-text">http和https的区别</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#https%E7%9B%B8%E5%AF%B9%E4%BA%8Ehttp%E7%9A%84%E6%94%B9%E8%BF%9B"><span class="toc-number">4.</span> <span class="toc-text">https相对于http的改进</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#https%E7%9A%84%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86"><span class="toc-number">5.</span> <span class="toc-text">https的工作原理</span></a></li></ol></div></div></div><div class="card-widget card-recent-post"><div class="card-content"><div class="item-headline"><i class="fas fa-history"></i><span>Recent Post</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2020/12/15/js-Event-Loop/" title="js的执行机制"><img src="/2020/12/15/js-Event-Loop/loop.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="js的执行机制"/></a><div class="content"><a class="title" href="/2020/12/15/js-Event-Loop/" title="js的执行机制">js的执行机制</a><time datetime="2020-12-15T15:46:41.000Z" title="Created 2020-12-15 23:46:41">2020-12-15</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2020/08/28/js-new/" title="JS new操作符"><img src="/2020/08/28/js-new/new.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="JS new操作符"/></a><div class="content"><a class="title" href="/2020/08/28/js-new/" title="JS new操作符">JS new操作符</a><time datetime="2020-08-27T19:31:25.000Z" title="Created 2020-08-28 03:31:25">2020-08-28</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2020/08/25/js-event/" title="JS事件的三个阶段"><img src="/2020/08/25/js-event/bg_event.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="JS事件的三个阶段"/></a><div class="content"><a class="title" href="/2020/08/25/js-event/" title="JS事件的三个阶段">JS事件的三个阶段</a><time datetime="2020-08-24T19:18:19.000Z" title="Created 2020-08-25 03:18:19">2020-08-25</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2020/08/22/css-clear-float/" title="清除浮动"><img src="/2020/08/22/css-clear-float/clear_float.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="清除浮动"/></a><div class="content"><a class="title" href="/2020/08/22/css-clear-float/" title="清除浮动">清除浮动</a><time datetime="2020-08-21T19:09:35.000Z" title="Created 2020-08-22 03:09:35">2020-08-22</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2020/08/21/js-compress/" title="压缩算法"><img src="/2020/08/21/js-compress/compress.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="压缩算法"/></a><div class="content"><a class="title" href="/2020/08/21/js-compress/" title="压缩算法">压缩算法</a><time datetime="2020-08-20T19:05:28.000Z" title="Created 2020-08-21 03:05:28">2020-08-21</time></div></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 By HC-ZHAN</div><div class="framework-info"><span>Framework </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>Theme </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="Read Mode"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="Switch Between Light And Dark Mode"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="Toggle between single-column and double-column"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="Setting"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="Table Of Contents"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="Scroll To Comments"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="Back To Top"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><div class="js-pjax"><script>function loadValine () {
+  function initValine () {
+    let initData = {
+      el: '#vcomment',
+      appId: 'mpvHGAn0KBSGL4nUR3TCqdxc-gzGzoHsz',
+      appKey: 'mPvd4d8uiFpFwAG70uRIauwV',
+      placeholder: 'Please leave your footprints',
+      avatar: 'monsterid',
+      meta: 'nick,mail,link'.split(','),
+      pageSize: '10',
+      lang: 'en',
+      recordIP: false,
+      serverURLs: '',
+      emojiCDN: '',
+      emojiMaps: "",
+      enableQQ: false,
+      path: window.location.pathname,
+    }
+
+    if (true) { 
+      initData.requiredFields= ('nick,mail'.split(','))
+    }
+    
+    if (false) {
+      const otherData = false
+      initData = Object.assign({}, initData, otherData)
+    }
+    
+    const valine = new Valine(initData)
+  }
+
+  if (typeof Valine === 'function') initValine() 
+  else getScript('https://cdn.jsdelivr.net/npm/valine/dist/Valine.min.js').then(initValine)
+}
+
+if ('Valine' === 'Valine' || !false) {
+  if (false) btf.loadComment(document.querySelector('#vcomment'),loadValine)
+  else setTimeout(() => loadValine(), 0)
+} else {
+  function loadOtherComment () {
+    loadValine()
+  }
+}</script><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></div></body></html>
