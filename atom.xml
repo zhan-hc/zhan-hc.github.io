@@ -6,7 +6,7 @@
   <link href="http://example.com/atom.xml" rel="self"/>
   
   <link href="http://example.com/"/>
-  <updated>2020-12-16T05:11:01.854Z</updated>
+  <updated>2020-12-18T12:43:58.472Z</updated>
   <id>http://example.com/</id>
   
   <author>
@@ -15,6 +15,29 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>CSS 盒模型</title>
+    <link href="http://example.com/2020/12/18/css-box/"/>
+    <id>http://example.com/2020/12/18/css-box/</id>
+    <published>2020-12-18T11:42:05.000Z</published>
+    <updated>2020-12-18T12:43:58.472Z</updated>
+    
+    <content type="html"><![CDATA[<p>所有HTML元素可以看作盒子，在CSS中，”box model”这一术语是用来设计和布局时使用。<br>CSS盒模型本质上是一个盒子，封装周围的HTML元素，它包括：边距，边框，填充，和实际内容。<br>盒模型允许我们在其它元素和周围元素边框之间的空间放置元素。</p><ul><li>W3C标准盒模型</li><li>IE盒模型</li><li>两种盒模型的区别</li></ul><p>盒子模型<br><img src="box-model.png" alt="盒子模型"></p><ul><li><strong>Margin(外边距)</strong> - 清除边框外的区域，外边距是透明的。</li><li><strong>Border(边框)</strong>- 围绕在内边距和内容外的边框。</li><li><strong>Padding(内边距)</strong> - 清除内容周围的区域，内边距是透明的。</li><li><strong>Content(内容)</strong> - 盒子的内容，显示文本和图像。</li></ul><h2 id="W3C标准盒模型"><a href="#W3C标准盒模型" class="headerlink" title="W3C标准盒模型"></a>W3C标准盒模型</h2><p><img src="test2.jpg" alt="标准盒模型"><br><font color='red'><strong>盒子的内容区域(content) = 设置的width/height</strong></font><br><strong>标准盒模型的宽高</strong><br><font color='red'><strong>width=  content + padding * 2 + border * 2<br>height=  content + padding * 2 + border * 2</strong></font></p><h3 id="示例"><a href="#示例" class="headerlink" title="示例"></a>示例</h3><figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-tag">body</span>&#123;</span><br><span class="line">    <span class="attribute">margin</span>: <span class="number">0</span>;</span><br><span class="line">    <span class="attribute">padding</span>: <span class="number">0</span>;</span><br><span class="line">    <span class="attribute">background</span>: darkseagreen;</span><br><span class="line">&#125;</span><br><span class="line"><span class="selector-class">.box</span>&#123;</span><br><span class="line">    <span class="attribute">width</span>: <span class="number">300px</span>;</span><br><span class="line">    <span class="attribute">height</span>: <span class="number">200px</span>;</span><br><span class="line">    <span class="attribute">background</span>:<span class="number">#87CEFA</span>;</span><br><span class="line">    <span class="attribute">border</span>: <span class="number">10px</span> solid<span class="number">#FFA07A</span>;</span><br><span class="line">    <span class="attribute">margin</span>: <span class="number">20px</span>;</span><br><span class="line">    <span class="attribute">padding</span>: <span class="number">20px</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p><strong>效果</strong><br><img src="test.PNG" alt="标准盒模型"><br>我们点击f12，打开调试页面<br><img src="test1.PNG" alt="标准盒模型"><br>明明我们设置的是宽高为300x200的盒子，发现却是一个360x260的盒子。<br>盒子的宽高：<br><strong>360(width) = 300(content) + 20(padding) * 2 + 10(border) * 2</strong><br><strong>260(height) = 200(content) + 20(padding) * 2 + 10(border) * 2</strong></p><h2 id="IE盒模型"><a href="#IE盒模型" class="headerlink" title="IE盒模型"></a>IE盒模型</h2><p><img src="test3.jpg" alt="IE盒模型"><br><font color='red'><strong>盒子的宽高 = 设置的width/height</strong></font></p><h3 id="示例-1"><a href="#示例-1" class="headerlink" title="示例"></a>示例</h3><figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-tag">body</span>&#123;</span><br><span class="line">    <span class="attribute">margin</span>: <span class="number">0</span>;</span><br><span class="line">    <span class="attribute">padding</span>: <span class="number">0</span>;</span><br><span class="line">    <span class="attribute">background</span>: darkseagreen;</span><br><span class="line">&#125;</span><br><span class="line"><span class="selector-class">.box</span>&#123;</span><br><span class="line">    <span class="attribute">width</span>: <span class="number">300px</span>;</span><br><span class="line">    <span class="attribute">height</span>: <span class="number">200px</span>;</span><br><span class="line">    <span class="attribute">background</span>: <span class="number">#FFA07A</span>;</span><br><span class="line">    <span class="attribute">border</span>: <span class="number">10px</span> solid <span class="number">#87CEFA</span>;</span><br><span class="line">    <span class="attribute">margin</span>: <span class="number">20px</span>;</span><br><span class="line">    <span class="attribute">padding</span>: <span class="number">20px</span>;</span><br><span class="line">    box-sizing: border-box; // 改变盒模型</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p><strong>效果</strong><br><img src="test5.PNG" alt="IE盒模型"><br>我们点击f12，打开调试页面<br><img src="test4.PNG" alt="IE盒模型"></p><p>盒子的宽高：<br><strong>300(width) = 240(content) + 20(padding) * 2 + 10(border) * 2</strong><br><strong>200(height) = 140(content) + 20(padding) * 2 + 10(border) * 2</strong></p><h2 id="两种盒模型的区别"><a href="#两种盒模型的区别" class="headerlink" title="两种盒模型的区别"></a>两种盒模型的区别</h2><ul><li>在 标准盒子模型中，width 和 height 指的是<strong>内容区域的宽度和高度</strong>。增加内边距、边框和外边距不会影响内容区域的尺寸，但是会增加元素框的总尺寸。</li><li>IE盒子模型中，width 和 height 指的是<strong>内容区域</strong>+<strong>border</strong>+<strong>padding</strong>的宽度和高度。</li></ul><h2 id="box-sizing"><a href="#box-sizing" class="headerlink" title="box-sizing"></a>box-sizing</h2><p>如果想要切换盒模型也很简单，这里需要借助css3的box-sizing属性</p><blockquote><ul><li><strong>box-sizing: content-box</strong> 是W3C盒模型</li><li><strong>box-sizing: border-box</strong> 是IE盒模型</li></ul></blockquote><p><strong>box-sizing的默认属性是content-box</strong></p>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;所有HTML元素可以看作盒子，在CSS中，”box model”这一术语是用来设计和布局时使用。&lt;br&gt;CSS盒模型本质上是一个盒子，封装周围的HTML元素，它包括：边距，边框，填充，和实际内容。&lt;br&gt;盒模型允许我们在其它元素和周围元素边框之间的空间放置元素。&lt;/p&gt;
+&lt;</summary>
+      
+    
+    
+    
+    
+    <category term="css" scheme="http://example.com/tags/css/"/>
+    
+  </entry>
   
   <entry>
     <title>js的执行机制</title>
