@@ -6,7 +6,7 @@
   <link href="http://example.com/atom.xml" rel="self"/>
   
   <link href="http://example.com/"/>
-  <updated>2020-12-21T16:51:50.071Z</updated>
+  <updated>2020-12-23T13:47:52.111Z</updated>
   <id>http://example.com/</id>
   
   <author>
@@ -15,6 +15,35 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>前端持久化存储</title>
+    <link href="http://example.com/2020/12/23/js-storage/"/>
+    <id>http://example.com/2020/12/23/js-storage/</id>
+    <published>2020-12-23T12:16:04.000Z</published>
+    <updated>2020-12-23T13:47:52.111Z</updated>
+    
+    <content type="html"><![CDATA[<h2 id="Cookie"><a href="#Cookie" class="headerlink" title="Cookie"></a>Cookie</h2><ul><li><strong>定义：</strong><br>Cookie是保存在客户机的文本文件（IE保存在本地的一个txt文件中）, 这个文件与特定的 Web 文档关联在一起, 保存了该客户机访问这个Web 文档时的信息, 当客户机再次访问这个 Web 文档时这些信息可供该文档使用。请求服务器时放在http请求头里面（不论是否需要，都会放在请求头里面）</li><li><strong>为什么需要cookie？</strong><br>HTTP是一种无状态的协议，客户端与服务器建立连接并传输数据，数据传输完成后，连接就会关闭。再次交互数据需要建立新的连接，因此，服务器无法从连接上跟踪会话，也无法知道用户上一次做了什么。如：在网络有时候需要用户登录才进一步操作，用户输入用户名密码登录后，浏览了几个页面，由于HTTP的无状态性，服务器并不知道用户有没有登录。但是有了Cookie，服务器在第一次客户端请求的时候，将cookie保存在客户端，客户端重新请求服务器时会携带cookie（未过期），这样服务器就知道上一次用户做了什么。服务器还会对Cookie信息进行维护，必要时会对Cookie内容进行修改。</li><li><strong>场景：</strong><blockquote><p><strong>保存用户登录状态</strong>：例如将用户id存储于一个cookie内，这样当用户下次访问该页面时就不需要重新登录了，现在很多论坛和社区都提供这样的功能。 cookie还可以设置过期时间，当超过时间期限后，cookie就会自动消失。因此，系统往往可以提示用户保持登录状态的时间：常见选项有一个月、三个 月、一年等。<br><strong>跟踪用户行为</strong>：例如一个天气预报网站，能够根据用户选择的地区显示当地的天气情况。如果每次都需要选择所在地是烦琐的，当利用了 cookie后就会显得很人性化了，系统能够记住上一次访问的地区，当下次再打开该页面时，它就会自动显示上次用户所在地区的天气情况。因为一切都是在后 台完成，所以这样的页面就像为某个用户所定制的一样，使用起来非常方便。<br><strong>定制页面</strong>：如果网站提供了换肤或更换布局的功能，那么可以使用cookie来记录用户的选项，例如：背景色、分辨率等。当用户下次访问时，仍然可以保存上一次访问的界面风格。<br><strong>创建购物车</strong>：正如在前面的例子中使用cookie来记录用户需要购买的商品一样，在结账的时候可以统一提交。例如淘宝网就使用cookie记录了用户曾经浏览过的商品，方便随时进行比较。 </p></blockquote></li><li><strong>属性：</strong><table><thead><tr><th align="center">序号</th><th align="center">属性</th><th align="left">解释</th></tr></thead><tbody><tr><td align="center">1</td><td align="center">Expires(http/1.0协议)</td><td align="left">设置Cookie的过期时间</td></tr><tr><td align="center">2</td><td align="center">maxAge(http/1.1协议)</td><td align="left">该Cookie失效的时间，单位秒。是个相对值,相对的是文档第一次被请求时服务器记录的请求时间。如果为正数，则该Cookie在maxAge秒之后失效。如果为负数，关闭浏览器即失效。如果为0，表示删除该Cookie。默认为–1。</td></tr><tr><td align="center">3</td><td align="center">path</td><td align="left">cookie能被使用的路径，默认当前路径 /</td></tr><tr><td align="center">4</td><td align="center">domain</td><td align="left">该Cookie变量所属域</td></tr><tr><td align="center">5</td><td align="center">Secure</td><td align="left">指定是否使用HTTPS安全协议发送Cookie。在网络上传输数据之前先将数据加密。默认为false</td></tr><tr><td align="center">6</td><td align="center">httpOnly</td><td align="left">设置cookie是否能通过 js 去访问,防止客户端脚本通过document.cookie属性访问Cookie，有助于保护Cookie不被跨站脚本攻击窃取或篡改。默认为false</td></tr><tr><td align="center">7</td><td align="center">size</td><td align="left">cookie的大小</td></tr></tbody></table></li><li><strong>缺点：</strong></li><li>每个特定域名下的cookie数量有限</li><li>存储量太小，只有4KB；</li><li>每次HTTP请求都会发送到服务端，影响获取资源的效率；</li><li>需要自己封装获取、设置、删除cookie的方法；</li></ul><h2 id="Web-Storage"><a href="#Web-Storage" class="headerlink" title="Web Storage"></a>Web Storage</h2><p>html5 中的 Web Storage 包括了两种存储方式：<strong>sessionStorage</strong> 和<strong>localStorage</strong>。<br><strong>sessionStorage</strong> 用于本地存储一个会话（session）中的数据，这些数据只有在同一个会话中的页面才能访问，会话结束后数据也随之销毁。<br><strong>localStorage</strong> 用于存储一个域名下的需要永久存在在本地的数据，这些数据可以被一直访问，直到这些数据被删除。<br>因此sessionStorage 和 localStorage 的主要区别在于他们存储数据的生命周期，sessionStorage 存储的数据的生命周期是一个会话，而 localStorage 存储的数据的生命周期是永久，直到被主动删除，否则数据永远不会过期的。</p><h3 id="sessionStorage-和-localStorage异同"><a href="#sessionStorage-和-localStorage异同" class="headerlink" title="sessionStorage 和 localStorage异同"></a>sessionStorage 和 localStorage异同</h3><ul><li><strong>生命周期</strong>：localStorage:localStorage的生命周期是永久的，关闭页面或浏览器之后localStorage中的数据也不会消失。localStorage除非主动删除数据，否则数据永远不会消失。  sessionStorage的生命周期是在仅在当前会话下有效。</li><li><strong>存储大小</strong>：localStorage和sessionStorage的存储数据大小一般都是：5MB  </li><li><strong>存储位置</strong>：localStorage和sessionStorage都保存在客户端，不与服务器进行交互通信。  </li><li><strong>存储内容类型</strong>：localStorage和sessionStorage只能存储字符串类型，对于复杂的对象可以使用ECMAScript提供的JSON对象的stringify和parse来处理  </li><li><strong>获取方式</strong>：localStorage：window.localStorage;；sessionStorage：window.sessionStorage;。 </li><li> <strong>应用场景</strong>：localStoragese：常用于长期登录（+判断用户是否已登录），适合长期保存在本地的数据（令牌）。sessionStorage：敏感账号一次性登录；</li></ul><h2 id="web-storage和cookie的异同"><a href="#web-storage和cookie的异同" class="headerlink" title="web storage和cookie的异同"></a>web storage和cookie的异同</h2><p><strong>共同点：</strong><br><strong>都是保存在浏览器端，且同源的。</strong></p><p><strong>区别：</strong></p><ul><li>存储的大小：cookie：单个cookie保存的数据不能超过4kb；web storage的存储大小5MB</li><li>作用：cookie是用于客户端和服务端间的信息传递；web storage是用于本地大容量存储数据；</li><li>有期时间：cookie可设置失效时间，localstorage除非主动删除；sessionstorage关闭会话窗口失效</li><li></li></ul>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;h2 id=&quot;Cookie&quot;&gt;&lt;a href=&quot;#Cookie&quot; class=&quot;headerlink&quot; title=&quot;Cookie&quot;&gt;&lt;/a&gt;Cookie&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;定义：&lt;/strong&gt;&lt;br&gt;Cookie是保存在客户机的文本文件（IE保存在</summary>
+      
+    
+    
+    
+    
+    <category term="js" scheme="http://example.com/tags/js/"/>
+    
+    <category term="Cookie" scheme="http://example.com/tags/Cookie/"/>
+    
+    <category term="localStorage" scheme="http://example.com/tags/localStorage/"/>
+    
+    <category term="sessionStorage" scheme="http://example.com/tags/sessionStorage/"/>
+    
+  </entry>
   
   <entry>
     <title>js-原型-原型链</title>
