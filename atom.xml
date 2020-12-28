@@ -6,7 +6,7 @@
   <link href="http://example.com/atom.xml" rel="self"/>
   
   <link href="http://example.com/"/>
-  <updated>2020-12-24T18:32:51.820Z</updated>
+  <updated>2020-12-28T04:38:23.089Z</updated>
   <id>http://example.com/</id>
   
   <author>
@@ -15,6 +15,32 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>16进制颜色转换RGB原理</title>
+    <link href="http://example.com/2020/12/28/js-rgba/"/>
+    <id>http://example.com/2020/12/28/js-rgba/</id>
+    <published>2020-12-28T03:59:48.000Z</published>
+    <updated>2020-12-28T04:38:23.089Z</updated>
+    
+    <content type="html"><![CDATA[<h2 id="RGB-三通道颜色"><a href="#RGB-三通道颜色" class="headerlink" title="RGB: 三通道颜色"></a>RGB: 三通道颜色</h2><ul><li>他是目前运用最广泛的颜色系统之一</li><li>可以通过红绿蓝三色通道, 外加alpha透明度, 来展示几乎所有的颜色</li><li>RGB是从颜色的发光原理来设定的, 相当于红绿蓝三个颜色通过不同亮度, 来组合成为需要的颜色</li><li>0为最暗, 255为最亮</li></ul><h2 id="RGB转换为HEX-16进制"><a href="#RGB转换为HEX-16进制" class="headerlink" title="RGB转换为HEX(16进制)"></a>RGB转换为HEX(16进制)</h2><p>RGB与HEX中每个颜色都是一一对应的关系<br><strong>RGB的数值 = 16 * HEX的第一位 + HEX的第二位</strong><br>示例如下:</p><ul><li>RGB: 92, 184, 232</li><li>92 / 16 = 5余12 -&gt; 5C</li><li>184 / 16 = 11余8 -&gt; B8</li><li>232 / 16 = 14余8 -&gt; E8</li><li>HEX = 5CB8E8</li></ul><h2 id="HEX转换RGB"><a href="#HEX转换RGB" class="headerlink" title="HEX转换RGB"></a>HEX转换RGB</h2><p>此转换就是将上述的转换逆转即可<br>示例如下</p><ul><li>HEX: F26BC1</li><li>F2 = 15和2 -&gt; 15 * 16 + 2 = 242</li><li>6B = 6和11 -&gt; 6 * 16 + 11 = 107</li><li>C1 = 12和1 -&gt; 12 * 16 + 1 = 193</li></ul><h2 id="常见算法题"><a href="#常见算法题" class="headerlink" title="常见算法题"></a>常见算法题</h2><h3 id="描述"><a href="#描述" class="headerlink" title="描述"></a>描述</h3><p>设计一个函数，给出一个rgba数值，返回16进制的表达式及透明度。</p><h3 id="输入"><a href="#输入" class="headerlink" title="输入"></a>输入</h3><blockquote><p><strong>rgba(255,255,255,0.4)</strong></p></blockquote><h3 id="输出"><a href="#输出" class="headerlink" title="输出"></a>输出</h3><blockquote><p><strong>颜色：#FFFFFF，透明度：0.4</strong></p></blockquote><h3 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">convert</span> (<span class="params">str</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> r = str.slice(<span class="number">5</span>,-<span class="number">1</span>).split(<span class="string">&#x27;,&#x27;</span>) <span class="comment">// 截取字符串</span></span><br><span class="line">    <span class="keyword">var</span> color = [<span class="string">&#x27;0&#x27;</span>,<span class="string">&#x27;1&#x27;</span>,<span class="string">&#x27;2&#x27;</span>,<span class="string">&#x27;3&#x27;</span>,<span class="string">&#x27;4&#x27;</span>,<span class="string">&#x27;5&#x27;</span>,<span class="string">&#x27;6&#x27;</span>,<span class="string">&#x27;7&#x27;</span>,<span class="string">&#x27;8&#x27;</span>,<span class="string">&#x27;9&#x27;</span>,<span class="string">&#x27;A&#x27;</span>,<span class="string">&#x27;B&#x27;</span>,<span class="string">&#x27;C&#x27;</span>,<span class="string">&#x27;D&#x27;</span>,<span class="string">&#x27;E&#x27;</span>,<span class="string">&#x27;F&#x27;</span>]</span><br><span class="line">    <span class="keyword">var</span> res = <span class="string">&#x27;颜色：#&#x27;</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>;i&lt;<span class="number">3</span>;i++) &#123;</span><br><span class="line">        <span class="keyword">let</span> c = <span class="built_in">Math</span>.floor((r[i]) / <span class="number">16</span>)</span><br><span class="line">        <span class="keyword">let</span> y = <span class="built_in">Number</span>(r[i]) % <span class="number">16</span></span><br><span class="line">        res += color[c]</span><br><span class="line">        <span class="keyword">if</span>(y === <span class="number">0</span>) res += color[c]</span><br><span class="line">        <span class="keyword">else</span> res += color[y]</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="string">`<span class="subst">$&#123;res&#125;</span>，透明度：<span class="subst">$&#123;r[<span class="number">3</span>]&#125;</span>`</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;h2 id=&quot;RGB-三通道颜色&quot;&gt;&lt;a href=&quot;#RGB-三通道颜色&quot; class=&quot;headerlink&quot; title=&quot;RGB: 三通道颜色&quot;&gt;&lt;/a&gt;RGB: 三通道颜色&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;他是目前运用最广泛的颜色系统之一&lt;/li&gt;
+&lt;li&gt;可以通过红绿蓝三</summary>
+      
+    
+    
+    
+    
+    <category term="js" scheme="http://example.com/tags/js/"/>
+    
+    <category term="rgba" scheme="http://example.com/tags/rgba/"/>
+    
+  </entry>
   
   <entry>
     <title>变量提升和函数提升</title>
@@ -534,35 +560,6 @@
       
     <summary type="html">&lt;p&gt;宽度的自适应是根据viewport的width来调整的,而css属性中的padding也是根据viewport的width来计算的，那么通过设置这个属性就可以跟width达成某种比例关系。&lt;/p&gt;
 &lt;h2 id=&quot;css实现高度自适应&quot;&gt;&lt;a href=&quot;#css实现高度自</summary>
-      
-    
-    
-    
-    <category term="css" scheme="http://example.com/categories/css/"/>
-    
-    
-    <category term="css" scheme="http://example.com/tags/css/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>文字溢出隐藏</title>
-    <link href="http://example.com/2020/03/13/css-ellipsis/"/>
-    <id>http://example.com/2020/03/13/css-ellipsis/</id>
-    <published>2020-03-13T14:13:20.000Z</published>
-    <updated>2020-12-14T03:52:41.169Z</updated>
-    
-    <content type="html"><![CDATA[<p>文本溢出隐藏在前端是很常见的需求，例如文章的标题过长，需要超出几行后隐藏，显示省略号（…）。</p><ul><li>单行文字溢出隐藏</li><li>多行文字溢出隐藏</li></ul><h3 id="单行文字溢出隐藏"><a href="#单行文字溢出隐藏" class="headerlink" title="单行文字溢出隐藏"></a>单行文字溢出隐藏</h3><figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-tag">overflow</span>: <span class="selector-tag">hidden</span>;</span><br><span class="line"><span class="selector-tag">white-space</span>: <span class="selector-tag">nowrap</span>;</span><br><span class="line"><span class="selector-tag">text-overflow</span>: <span class="selector-tag">ellipsis</span>;</span><br></pre></td></tr></table></figure><h3 id="多行文字溢出隐藏"><a href="#多行文字溢出隐藏" class="headerlink" title="多行文字溢出隐藏"></a>多行文字溢出隐藏</h3><figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-tag">overflow</span><span class="selector-pseudo">:hidden</span>;</span><br><span class="line"><span class="selector-tag">text-overflow</span><span class="selector-pseudo">:ellipsis</span>;</span><br><span class="line"><span class="selector-tag">display</span><span class="selector-pseudo">:-webkit-box</span>;</span><br><span class="line"><span class="selector-tag">-webkit-box-orient</span><span class="selector-pseudo">:vertical</span>;</span><br><span class="line"><span class="selector-tag">-webkit-line-clamp</span><span class="selector-pseudo">:3</span>; //文本超出三行后隐藏</span><br></pre></td></tr></table></figure>]]></content>
-    
-    
-      
-      
-    <summary type="html">&lt;p&gt;文本溢出隐藏在前端是很常见的需求，例如文章的标题过长，需要超出几行后隐藏，显示省略号（…）。&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;单行文字溢出隐藏&lt;/li&gt;
-&lt;li&gt;多行文字溢出隐藏&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h3 id=&quot;单行文字溢出隐藏&quot;&gt;&lt;a href=&quot;#单行文字溢出隐藏&quot; c</summary>
       
     
     
