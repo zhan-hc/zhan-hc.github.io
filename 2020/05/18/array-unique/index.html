@@ -1,0 +1,265 @@
+<!DOCTYPE html><html lang="en" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>js数组去重-ES6 | 前端笨鸟</title><meta name="keywords" content="array,es6"><meta name="author" content="HC-ZHAN"><meta name="copyright" content="HC-ZHAN"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><meta name="description" content="数组去重是面试经常会遇到的问题，解决的方案有很多，本篇着重通过es6提供的新的数据结构来解决。  Map对象解决去重 Set对象解决去重  Map对象解决去重Map 对象保存键值对。任何值(对象或者原始值) 都可以作为一个键或一个值。 Map对象   方法 描述    clear 删除所有的键&#x2F;值对，没有返回值   delete 删除某个键，返回true。如果删除失败，返回false。   for">
+<meta property="og:type" content="article">
+<meta property="og:title" content="js数组去重-ES6">
+<meta property="og:url" content="http://example.com/2020/05/18/array-unique/index.html">
+<meta property="og:site_name" content="前端笨鸟">
+<meta property="og:description" content="数组去重是面试经常会遇到的问题，解决的方案有很多，本篇着重通过es6提供的新的数据结构来解决。  Map对象解决去重 Set对象解决去重  Map对象解决去重Map 对象保存键值对。任何值(对象或者原始值) 都可以作为一个键或一个值。 Map对象   方法 描述    clear 删除所有的键&#x2F;值对，没有返回值   delete 删除某个键，返回true。如果删除失败，返回false。   for">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/2020/05/18/array-unique/unique.jpg">
+<meta property="article:published_time" content="2020-05-17T17:01:54.000Z">
+<meta property="article:modified_time" content="2020-12-14T03:52:27.009Z">
+<meta property="article:author" content="HC-ZHAN">
+<meta property="article:tag" content="array">
+<meta property="article:tag" content="es6">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2020/05/18/array-unique/unique.jpg"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://example.com/2020/05/18/array-unique/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><script>var GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true},
+  copy: {
+    success: 'Copy successfully',
+    error: 'Copy error',
+    noSupport: 'The browser does not support'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: 'Just',
+    min: 'minutes ago',
+    hour: 'hours ago',
+    day: 'days ago',
+    month: 'months ago'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    jQuery: 'https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js',
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+    },
+    fancybox: {
+      js: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isanchor: false
+};
+
+var saveToLocal = {
+  set: function setWithExpiry(key, value, ttl) {
+    const now = new Date()
+    const expiryDay = ttl * 86400000
+    const item = {
+      value: value,
+      expiry: now.getTime() + expiryDay,
+    }
+    localStorage.setItem(key, JSON.stringify(item))
+  },
+
+  get: function getWithExpiry(key) {
+    const itemStr = localStorage.getItem(key)
+
+    if (!itemStr) {
+      return undefined
+    }
+    const item = JSON.parse(itemStr)
+    const now = new Date()
+
+    if (now.getTime() > item.expiry) {
+      localStorage.removeItem(key)
+      return undefined
+    }
+    return item.value
+  }
+}
+
+// https://stackoverflow.com/questions/16839698/jquery-getscript-alternative-in-native-javascript
+const getScript = url => new Promise((resolve, reject) => {
+  const script = document.createElement('script')
+  script.src = url
+  script.async = true
+  script.onerror = reject
+  script.onload = script.onreadystatechange = function() {
+    const loadState = this.readyState
+    if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+    script.onload = script.onreadystatechange = null
+    resolve()
+  }
+  document.head.appendChild(script)
+})</script><script id="config_change">var GLOBAL_CONFIG_SITE = { 
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2020-12-14 11:52:27'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(function () {  window.activateDarkMode = function () {
+    document.documentElement.setAttribute('data-theme', 'dark')
+    if (document.querySelector('meta[name="theme-color"]') !== null) {
+      document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+    }
+  }
+  window.activateLightMode = function () {
+    document.documentElement.setAttribute('data-theme', 'light')
+   if (document.querySelector('meta[name="theme-color"]') !== null) {
+      document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+    }
+  }
+  const autoChangeMode = 'false'
+  const t = saveToLocal.get('theme')
+  if (autoChangeMode === '1') {
+    const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
+    const isLightMode = window.matchMedia('(prefers-color-scheme: light)').matches
+    const isNotSpecified = window.matchMedia('(prefers-color-scheme: no-preference)').matches
+    const hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
+    if (t === undefined) {
+      if (isLightMode) activateLightMode()
+      else if (isDarkMode) activateDarkMode()
+      else if (isNotSpecified || hasNoSupport) {
+        const now = new Date()
+        const hour = now.getHours()
+        const isNight = hour <= 6 || hour >= 18
+        isNight ? activateDarkMode() : activateLightMode()
+      }
+      window.matchMedia('(prefers-color-scheme: dark)').addListener(function (e) {
+        if (saveToLocal.get('theme') === undefined) {
+          e.matches ? activateDarkMode() : activateLightMode()
+        }
+      })
+    } else if (t === 'light') activateLightMode()
+    else activateDarkMode()
+  } else if (autoChangeMode === '2') {
+    const now = new Date()
+    const hour = now.getHours()
+    const isNight = hour <= 6 || hour >= 18
+    if (t === undefined) isNight ? activateDarkMode() : activateLightMode()
+    else if (t === 'light') activateLightMode()
+    else activateDarkMode()
+  } else {
+    if (t === 'dark') activateDarkMode()
+    else if (t === 'light') activateLightMode()
+  }const asideStatus = saveToLocal.get('aside-status')
+if (asideStatus !== undefined) {
+   if (asideStatus === 'hide') {
+     document.documentElement.classList.add('hide-aside')
+   } else {
+     document.documentElement.classList.remove('hide-aside')
+   }
+}})()</script><meta name="generator" content="Hexo 5.2.0"><link rel="alternate" href="/atom.xml" title="前端笨鸟" type="application/atom+xml">
+</head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="author-avatar"><img class="avatar-img" src="/img/avatar.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data"><div class="data-item is-center"><div class="data-item-link"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">21</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/tags/"><div class="headline">Tags</div><div class="length-num">20</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/categories/"><div class="headline">Categories</div><div class="length-num">8</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><span> Categories</span></a></div></div></div></div><div id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(/2020/05/18/array-unique/unique.jpg)"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">前端笨鸟</a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><span> Categories</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">js数组去重-ES6</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">Created</span><time class="post-meta-date-created" datetime="2020-05-17T17:01:54.000Z" title="Created 2020-05-18 01:01:54">2020-05-18</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">Updated</span><time class="post-meta-date-updated" datetime="2020-12-14T03:52:27.009Z" title="Updated 2020-12-14 11:52:27">2020-12-14</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/array/">array</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">Post View:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><p>数组去重是面试经常会遇到的问题，解决的方案有很多，本篇着重通过es6提供的新的数据结构来解决。</p>
+<ul>
+<li>Map对象解决去重</li>
+<li>Set对象解决去重</li>
+</ul>
+<h2 id="Map对象解决去重"><a href="#Map对象解决去重" class="headerlink" title="Map对象解决去重"></a>Map对象解决去重</h2><p>Map 对象保存<strong>键值对</strong>。任何值(对象或者原始值) 都可以作为一个键或一个值。</p>
+<h3 id="Map对象"><a href="#Map对象" class="headerlink" title="Map对象"></a><strong>Map对象</strong></h3><table>
+<thead>
+<tr>
+<th align="center">方法</th>
+<th align="center">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">clear</td>
+<td align="center">删除所有的键/值对，没有返回值</td>
+</tr>
+<tr>
+<td align="center">delete</td>
+<td align="center">删除某个键，返回true。如果删除失败，返回false。</td>
+</tr>
+<tr>
+<td align="center">forEach</td>
+<td align="center">对每个元素执行指定操作。</td>
+</tr>
+<tr>
+<td align="center">get</td>
+<td align="center">返回Map对象key相对应的value值。</td>
+</tr>
+<tr>
+<td align="center">has</td>
+<td align="center">返回一个布尔值，表示某个键是否在当前Map对象之中。</td>
+</tr>
+<tr>
+<td align="center">set</td>
+<td align="center">给Map对象设置key/value键/值对。</td>
+</tr>
+</tbody></table>
+<h3 id="数组去重"><a href="#数组去重" class="headerlink" title="数组去重"></a>数组去重</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">unique</span>(<span class="params">arr</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">const</span> res = <span class="keyword">new</span> <span class="built_in">Map</span>();</span><br><span class="line">    <span class="keyword">return</span> arr.filter(<span class="function">(<span class="params">a</span>) =&gt;</span> !res.has(a) &amp;&amp; res.set(a, <span class="number">1</span>))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>Array.filter()</strong></p>
+<blockquote>
+<p>创建一个新的数组，新数组中的元素是通过检查指定数组中符合条件的所有元素。</p>
+</blockquote>
+<h2 id="Set对象解决去重"><a href="#Set对象解决去重" class="headerlink" title="Set对象解决去重"></a>Set对象解决去重</h2><p><strong>Set对象</strong>是值的集合,元素只会出现一次,即Set中的元素是<strong>唯一</strong>的.<br>通过Set()创建的是一个对象，可以使用<strong>点语法（…）</strong>或者是<strong>Array.from</strong>将其转化为数组，然后既可以使用数组处理函数了。</p>
+<p><strong>Set对象</strong></p>
+<blockquote>
+<p><strong>语法</strong>：<br>new Set([iterable])<br><strong>参数</strong>：<br>iterable，如果传递一个可迭代对象(包括 Array，Map，Set，String，TypedArray，arguments 对象等等)，它的所有元素将被添加到新的 Set中。如果不指定此参数或其值为null，则新的 Set为空。</p>
+</blockquote>
+<h3 id="数组去重-1"><a href="#数组去重-1" class="headerlink" title="数组去重"></a>数组去重</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">unique</span>(<span class="params">arr</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">Array</span>.from(<span class="keyword">new</span> <span class="built_in">Set</span>(arr))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>Array.from()</strong></p>
+<blockquote>
+<p>用于将两类对象转为真正的数组：类似数组的对象（array-like object）和可遍历（iterable）的对象（包括 ES6 新增的数据结构 Set 和 Map）。</p>
+</blockquote>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">Author: </span><span class="post-copyright-info"><a href="mailto:undefined">HC-ZHAN</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">Link: </span><span class="post-copyright-info"><a href="http://example.com/2020/05/18/array-unique/">http://example.com/2020/05/18/array-unique/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">Copyright Notice: </span><span class="post-copyright-info">All articles in this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless stating additionally.</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/array/">array</a><a class="post-meta__tags" href="/tags/es6/">es6</a></div><div class="post_share"><div class="social-share" data-image="/2020/05/18/array-unique/unique.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2020/05/19/sort-quick/"><img class="prev-cover" src="/2020/05/19/sort-quick/quick.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">Previous Post</div><div class="prev_info">JS快速排序算法</div></div></a></div><div class="next-post pull-right"><a href="/2020/04/04/http-https/"><img class="next-cover" src="/2020/04/04/http-https/http.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">Next Post</div><div class="next_info">http和https</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span> Related Articles</span></div><div class="relatedPosts-list"><div><a href="/2020/08/12/array-flat/" title="数组扁平化"><img class="cover" src="/2020/08/12/array-flat/flat.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-08-12</div><div class="title">数组扁平化</div></div></a></div><div><a href="/2020/06/03/es6-let-const-var/" title="作用域var和let和const的区别"><img class="cover" src="/2020/06/03/es6-let-const-var/es6.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-06-03</div><div class="title">作用域var和let和const的区别</div></div></a></div></div></div><hr/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> Comment</span></div></div><div class="comment-wrap"><div><div class="vcomment" id="vcomment"></div></div></div></div></div><div class="aside_content" id="aside_content"><div class="card-widget card-info"><div class="card-content"><div class="card-info-avatar is-center"><img class="avatar-img" src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/><div class="author-info__name">HC-ZHAN</div><div class="author-info__description">别说路不平,只是你不行</div></div><div class="card-info-data"><div class="card-info-data-item is-center"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">21</div></a></div><div class="card-info-data-item is-center"><a href="/tags/"><div class="headline">Tags</div><div class="length-num">20</div></a></div><div class="card-info-data-item is-center"><a href="/categories/"><div class="headline">Categories</div><div class="length-num">8</div></a></div></div><a class="button--animated" id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a></div></div><div class="card-widget card-announcement"><div class="card-content"><div class="item-headline"><i class="fas fa-bullhorn card-announcement-animation"></i><span>Announcement</span></div><div class="announcement_content">This is my Blog</div></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="card-content"><div class="item-headline"><i class="fas fa-stream"></i><span>Catalog</span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Map%E5%AF%B9%E8%B1%A1%E8%A7%A3%E5%86%B3%E5%8E%BB%E9%87%8D"><span class="toc-number">1.</span> <span class="toc-text">Map对象解决去重</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Map%E5%AF%B9%E8%B1%A1"><span class="toc-number">1.1.</span> <span class="toc-text">Map对象</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%95%B0%E7%BB%84%E5%8E%BB%E9%87%8D"><span class="toc-number">1.2.</span> <span class="toc-text">数组去重</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Set%E5%AF%B9%E8%B1%A1%E8%A7%A3%E5%86%B3%E5%8E%BB%E9%87%8D"><span class="toc-number">2.</span> <span class="toc-text">Set对象解决去重</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%95%B0%E7%BB%84%E5%8E%BB%E9%87%8D-1"><span class="toc-number">2.1.</span> <span class="toc-text">数组去重</span></a></li></ol></li></ol></div></div></div><div class="card-widget card-recent-post"><div class="card-content"><div class="item-headline"><i class="fas fa-history"></i><span>Recent Post</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2020/12/28/js-rgba/" title="16进制颜色转换RGB原理"><img src="/2020/12/28/js-rgba/rgba.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="16进制颜色转换RGB原理"/></a><div class="content"><a class="title" href="/2020/12/28/js-rgba/" title="16进制颜色转换RGB原理">16进制颜色转换RGB原理</a><time datetime="2020-12-28T03:59:48.000Z" title="Created 2020-12-28 11:59:48">2020-12-28</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2020/12/25/js-Hoisting/" title="变量提升和函数提升"><img src="/2020/12/25/js-Hoisting/hoisting.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="变量提升和函数提升"/></a><div class="content"><a class="title" href="/2020/12/25/js-Hoisting/" title="变量提升和函数提升">变量提升和函数提升</a><time datetime="2020-12-24T16:43:43.000Z" title="Created 2020-12-25 00:43:43">2020-12-25</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2020/12/23/js-storage/" title="前端持久化存储"><img src="/2020/12/23/js-storage/storage.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="前端持久化存储"/></a><div class="content"><a class="title" href="/2020/12/23/js-storage/" title="前端持久化存储">前端持久化存储</a><time datetime="2020-12-23T12:16:04.000Z" title="Created 2020-12-23 20:16:04">2020-12-23</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2020/12/21/js-prototype/" title="js-原型-原型链"><img src="/2020/12/21/js-prototype/proto.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="js-原型-原型链"/></a><div class="content"><a class="title" href="/2020/12/21/js-prototype/" title="js-原型-原型链">js-原型-原型链</a><time datetime="2020-12-21T15:51:09.000Z" title="Created 2020-12-21 23:51:09">2020-12-21</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2020/12/18/css-box/" title="CSS 盒模型"><img src="/2020/12/18/css-box/box.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="CSS 盒模型"/></a><div class="content"><a class="title" href="/2020/12/18/css-box/" title="CSS 盒模型">CSS 盒模型</a><time datetime="2020-12-18T11:42:05.000Z" title="Created 2020-12-18 19:42:05">2020-12-18</time></div></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2021 By HC-ZHAN</div><div class="framework-info"><span>Framework </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>Theme </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="Read Mode"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="Switch Between Light And Dark Mode"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="Toggle between single-column and double-column"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="Setting"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="Table Of Contents"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="Scroll To Comments"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="Back To Top"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><div class="js-pjax"><script>function loadValine () {
+  function initValine () {
+    let initData = {
+      el: '#vcomment',
+      appId: 'mpvHGAn0KBSGL4nUR3TCqdxc-gzGzoHsz',
+      appKey: 'mPvd4d8uiFpFwAG70uRIauwV',
+      placeholder: 'Please leave your footprints',
+      avatar: 'monsterid',
+      meta: 'nick,mail,link'.split(','),
+      pageSize: '10',
+      lang: 'en',
+      recordIP: false,
+      serverURLs: '',
+      emojiCDN: '',
+      emojiMaps: "",
+      enableQQ: false,
+      path: window.location.pathname,
+    }
+
+    if (true) { 
+      initData.requiredFields= ('nick,mail'.split(','))
+    }
+    
+    if (false) {
+      const otherData = false
+      initData = Object.assign({}, initData, otherData)
+    }
+    
+    const valine = new Valine(initData)
+  }
+
+  if (typeof Valine === 'function') initValine() 
+  else getScript('https://cdn.jsdelivr.net/npm/valine/dist/Valine.min.js').then(initValine)
+}
+
+if ('Valine' === 'Valine' || !false) {
+  if (false) btf.loadComment(document.querySelector('#vcomment'),loadValine)
+  else setTimeout(() => loadValine(), 0)
+} else {
+  function loadOtherComment () {
+    loadValine()
+  }
+}</script><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></div></body></html>

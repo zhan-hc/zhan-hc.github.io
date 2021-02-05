@@ -1,0 +1,256 @@
+<!DOCTYPE html><html lang="en" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Vue生命周期 | 前端笨鸟</title><meta name="keywords" content="vue"><meta name="author" content="HC-ZHAN"><meta name="copyright" content="HC-ZHAN"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><meta name="description" content="Vue生命周期是指vue实例对象从创建之初到销毁的过程，vue所有功能的实现都是围绕其生命周期进行的，在生命周期的不同阶段调用对应的钩子函数可以实现组件数据管理和DOM渲染两大重要功能。  vue生命周期 代码详解   vue生命周期每个 Vue 实例在被创建时都要经过一系列的初始化过程——例如，需要设置数据监听、编译模板、将实例挂载到 DOM 并在数据变化时更新 DOM 等。同时在这个过程中也会">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Vue生命周期">
+<meta property="og:url" content="http://example.com/2020/05/28/vue-life/index.html">
+<meta property="og:site_name" content="前端笨鸟">
+<meta property="og:description" content="Vue生命周期是指vue实例对象从创建之初到销毁的过程，vue所有功能的实现都是围绕其生命周期进行的，在生命周期的不同阶段调用对应的钩子函数可以实现组件数据管理和DOM渲染两大重要功能。  vue生命周期 代码详解   vue生命周期每个 Vue 实例在被创建时都要经过一系列的初始化过程——例如，需要设置数据监听、编译模板、将实例挂载到 DOM 并在数据变化时更新 DOM 等。同时在这个过程中也会">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/2020/05/28/vue-life/logo.jpeg">
+<meta property="article:published_time" content="2020-05-27T18:15:55.000Z">
+<meta property="article:modified_time" content="2020-12-14T03:53:46.343Z">
+<meta property="article:author" content="HC-ZHAN">
+<meta property="article:tag" content="vue">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2020/05/28/vue-life/logo.jpeg"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://example.com/2020/05/28/vue-life/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><script>var GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true},
+  copy: {
+    success: 'Copy successfully',
+    error: 'Copy error',
+    noSupport: 'The browser does not support'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: 'Just',
+    min: 'minutes ago',
+    hour: 'hours ago',
+    day: 'days ago',
+    month: 'months ago'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    jQuery: 'https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js',
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+    },
+    fancybox: {
+      js: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isanchor: false
+};
+
+var saveToLocal = {
+  set: function setWithExpiry(key, value, ttl) {
+    const now = new Date()
+    const expiryDay = ttl * 86400000
+    const item = {
+      value: value,
+      expiry: now.getTime() + expiryDay,
+    }
+    localStorage.setItem(key, JSON.stringify(item))
+  },
+
+  get: function getWithExpiry(key) {
+    const itemStr = localStorage.getItem(key)
+
+    if (!itemStr) {
+      return undefined
+    }
+    const item = JSON.parse(itemStr)
+    const now = new Date()
+
+    if (now.getTime() > item.expiry) {
+      localStorage.removeItem(key)
+      return undefined
+    }
+    return item.value
+  }
+}
+
+// https://stackoverflow.com/questions/16839698/jquery-getscript-alternative-in-native-javascript
+const getScript = url => new Promise((resolve, reject) => {
+  const script = document.createElement('script')
+  script.src = url
+  script.async = true
+  script.onerror = reject
+  script.onload = script.onreadystatechange = function() {
+    const loadState = this.readyState
+    if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+    script.onload = script.onreadystatechange = null
+    resolve()
+  }
+  document.head.appendChild(script)
+})</script><script id="config_change">var GLOBAL_CONFIG_SITE = { 
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2020-12-14 11:53:46'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(function () {  window.activateDarkMode = function () {
+    document.documentElement.setAttribute('data-theme', 'dark')
+    if (document.querySelector('meta[name="theme-color"]') !== null) {
+      document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+    }
+  }
+  window.activateLightMode = function () {
+    document.documentElement.setAttribute('data-theme', 'light')
+   if (document.querySelector('meta[name="theme-color"]') !== null) {
+      document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+    }
+  }
+  const autoChangeMode = 'false'
+  const t = saveToLocal.get('theme')
+  if (autoChangeMode === '1') {
+    const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
+    const isLightMode = window.matchMedia('(prefers-color-scheme: light)').matches
+    const isNotSpecified = window.matchMedia('(prefers-color-scheme: no-preference)').matches
+    const hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
+    if (t === undefined) {
+      if (isLightMode) activateLightMode()
+      else if (isDarkMode) activateDarkMode()
+      else if (isNotSpecified || hasNoSupport) {
+        const now = new Date()
+        const hour = now.getHours()
+        const isNight = hour <= 6 || hour >= 18
+        isNight ? activateDarkMode() : activateLightMode()
+      }
+      window.matchMedia('(prefers-color-scheme: dark)').addListener(function (e) {
+        if (saveToLocal.get('theme') === undefined) {
+          e.matches ? activateDarkMode() : activateLightMode()
+        }
+      })
+    } else if (t === 'light') activateLightMode()
+    else activateDarkMode()
+  } else if (autoChangeMode === '2') {
+    const now = new Date()
+    const hour = now.getHours()
+    const isNight = hour <= 6 || hour >= 18
+    if (t === undefined) isNight ? activateDarkMode() : activateLightMode()
+    else if (t === 'light') activateLightMode()
+    else activateDarkMode()
+  } else {
+    if (t === 'dark') activateDarkMode()
+    else if (t === 'light') activateLightMode()
+  }const asideStatus = saveToLocal.get('aside-status')
+if (asideStatus !== undefined) {
+   if (asideStatus === 'hide') {
+     document.documentElement.classList.add('hide-aside')
+   } else {
+     document.documentElement.classList.remove('hide-aside')
+   }
+}})()</script><meta name="generator" content="Hexo 5.2.0"><link rel="alternate" href="/atom.xml" title="前端笨鸟" type="application/atom+xml">
+</head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="author-avatar"><img class="avatar-img" src="/img/avatar.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data"><div class="data-item is-center"><div class="data-item-link"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">21</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/tags/"><div class="headline">Tags</div><div class="length-num">20</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/categories/"><div class="headline">Categories</div><div class="length-num">8</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><span> Categories</span></a></div></div></div></div><div id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(/2020/05/28/vue-life/logo.jpeg)"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">前端笨鸟</a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><span> Categories</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">Vue生命周期</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">Created</span><time class="post-meta-date-created" datetime="2020-05-27T18:15:55.000Z" title="Created 2020-05-28 02:15:55">2020-05-28</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">Updated</span><time class="post-meta-date-updated" datetime="2020-12-14T03:53:46.343Z" title="Updated 2020-12-14 11:53:46">2020-12-14</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/vue/">vue</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">Post View:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><p>Vue生命周期是指vue实例对象从创建之初到销毁的过程，vue所有功能的实现都是围绕其生命周期进行的，在生命周期的不同阶段调用对应的钩子函数可以实现组件数据管理和DOM渲染两大重要功能。</p>
+<ul>
+<li>vue生命周期</li>
+<li>代码详解</li>
+</ul>
+<p><img src="https://cn.vuejs.org/images/lifecycle.png" alt="vue-life"></p>
+<h2 id="vue生命周期"><a href="#vue生命周期" class="headerlink" title="vue生命周期"></a>vue生命周期</h2><p>每个 Vue 实例在被创建时都要经过一系列的初始化过程——例如，需要设置数据监听、编译模板、将实例挂载到 DOM 并在数据变化时更新 DOM 等。同时在这个过程中也会运行一些叫做生命周期钩子的函数，这给了用户在不 同阶段添加自己的代码的机会。<br>如下是Vue生命周期的所有钩子函数</p>
+<p><strong>beforeCreate(创建前)<br>created(创建后)<br>beforeMount(挂载前)<br>mounted(挂载后)<br>beforeUpdate(更新前)<br>uptaded(更新后)<br>beforeDestory(销毁前)<br>destoryed(销毁后)</strong></p>
+<h2 id="代码详解"><a href="#代码详解" class="headerlink" title="代码详解"></a>代码详解</h2><p><strong>测试代码</strong></p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;!DOCTYPE <span class="meta-keyword">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">meta</span> <span class="attr">charset</span>=<span class="string">&quot;utf-8&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">title</span>&gt;</span>Vue的生命周期详解<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">&quot;https://unpkg.com/vue/dist/vue.js&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">&quot;app&quot;</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">h1</span>&gt;</span>&#123;&#123; message &#125;&#125;<span class="tag">&lt;/<span class="name">h1</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="javascript">  <span class="keyword">var</span> vm = <span class="keyword">new</span> Vue(&#123;</span></span><br><span class="line"><span class="javascript">  el: <span class="string">&#x27;#app&#x27;</span>,</span></span><br><span class="line">  data: &#123;</span><br><span class="line"><span class="javascript">    message: <span class="string">&#x27;Hello Vue.js!&#x27;</span></span></span><br><span class="line">  &#125;,</span><br><span class="line">  beforeCreate () &#123;</span><br><span class="line"><span class="javascript">    <span class="built_in">console</span>.log(<span class="string">&quot;%c%s&quot;</span>, <span class="string">&quot;font-size:20px&quot;</span>,<span class="string">&#x27;beforeCreate&#x27;</span>)</span></span><br><span class="line">  &#125;,</span><br><span class="line">  created () &#123;</span><br><span class="line"><span class="javascript">    <span class="built_in">console</span>.log(<span class="string">&quot;%c%s&quot;</span>, <span class="string">&quot;font-size:20px&quot;</span>,<span class="string">&#x27;Created&#x27;</span>)</span></span><br><span class="line">  &#125;,</span><br><span class="line">  beforeMount () &#123;</span><br><span class="line"><span class="javascript">    <span class="built_in">console</span>.log(<span class="string">&quot;%c%s&quot;</span>, <span class="string">&quot;font-size:20px&quot;</span>,<span class="string">&#x27;beforeMount&#x27;</span>)</span></span><br><span class="line">  &#125;,</span><br><span class="line">  mounted () &#123;</span><br><span class="line"><span class="javascript">    <span class="built_in">console</span>.log(<span class="string">&quot;%c%s&quot;</span>, <span class="string">&quot;font-size:20px&quot;</span>,<span class="string">&#x27;mounted&#x27;</span>)</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;)</span><br><span class="line"><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p><strong>控制台输出结果</strong><br><img src="test.JPG" alt="控制台输出结果"></p>
+<p>通过控制台的输出结果可以看到vue实例创建的过程中调用的钩子函数以及顺序</p>
+<h3 id="beforeCreate-创建前"><a href="#beforeCreate-创建前" class="headerlink" title="beforeCreate(创建前)"></a>beforeCreate(创建前)</h3><blockquote>
+<p><strong>（beforeCreate钩子函数）在实例初始化之后，数据观测（data observer）和 event/watcher 事件配置之前被调用，此时的数据观察和事件机制都未形成，不能获得DOM节点。</strong></p>
+</blockquote>
+<h3 id="created-创建后"><a href="#created-创建后" class="headerlink" title="created(创建后)"></a>created(创建后)</h3><blockquote>
+<p><strong>在这个阶段vue实例已经创建，但仍然不能获取DOM元素。<br>数据已经和data属性进行绑定（可以改变data属性的值，但不会触发其他钩子函数，可以在这里对初始数据的获取。）</strong></p>
+</blockquote>
+<p><font color='red'><strong>注意</strong></font><br><strong>如果要在此阶段中进行dom操作，就要将操作都放在 Vue.nextTick() 的回调函数中，因为created() 钩子函数执行的时候 DOM 其实并未进行任何渲染，而此时进行 DOM 操作无异于徒劳，所以此处一定要将 DOM 操作的 js 代码放进 Vue.nextTick() 的回调函数中。</strong></p>
+<p>我们在created钩子函数中加入如下语句</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">console</span>.log(<span class="string">&quot;%c%s&quot;</span>, <span class="string">&quot;font-size:20px&quot;</span>,vm.$el.textContent)</span><br></pre></td></tr></table></figure>
+<p><img src="created_error.JPG" alt="控制台输出结果"></p>
+<p><strong>用Vue.nextTick将操作dom元素的语句放进其回调函数中就有效果。</strong></p>
+<h3 id="beforeMount-载入前"><a href="#beforeMount-载入前" class="headerlink" title="beforeMount(载入前)"></a>beforeMount(载入前)</h3><blockquote>
+<p><strong>在这个阶段首先判断vue实例中有没有el选项，有则继续编译，否则停止生命周期，直到vue实例上调用vm.$mount(el)<br>如果有el，再判断是否有template参数，有则将其当作模板编译成render函数，否则把外部HTML作为模板编译。template中的模板优先级高于outer HTML模板。</strong></p>
+</blockquote>
+<p><strong>调用vm.$mount(el)</strong></p>
+<p><img src="beforeMount.png" alt="beforeMount"></p>
+<p><strong>在控制台里调用vm.$mount(el)之后生命周期则继续</strong><br>测试优先级的代码</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">&quot;app&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">h1</span>&gt;</span>&#123;&#123; message &#125;&#125;这是外部的html<span class="tag">&lt;/<span class="name">h1</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="javascript">    <span class="keyword">var</span> vm = <span class="keyword">new</span> Vue(&#123;</span></span><br><span class="line"><span class="javascript">    el: <span class="string">&#x27;#app&#x27;</span>,</span></span><br><span class="line"><span class="javascript">    render: <span class="function"><span class="keyword">function</span>(<span class="params">createElement</span>) </span>&#123;</span></span><br><span class="line"><span class="javascript">        <span class="keyword">return</span> createElement(<span class="string">&#x27;h1&#x27;</span>, <span class="string">&#x27;this is createElement&#x27;</span>)</span></span><br><span class="line">    &#125;,</span><br><span class="line"><span class="handlebars"><span class="xml">    template: &quot;<span class="tag">&lt;<span class="name">h1</span>&gt;</span></span><span class="template-variable">&#123;&#123;<span class="name">message</span> +<span class="string">&#x27;这是在template中的&#x27;</span>&#125;&#125;</span><span class="xml"><span class="tag">&lt;/<span class="name">h1</span>&gt;</span>&quot;,</span></span></span><br><span class="line">    data: &#123;</span><br><span class="line"><span class="javascript">      message: <span class="string">&#x27;Hello Vue.js!&#x27;</span></span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;)</span><br><span class="line">  <span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p><strong>当render函数存在时，页面显示</strong><br><img src="test2.JPG" alt="beforeMount"><br><strong>当render函数注释掉，template存在时，页面显示</strong><br><img src="test3.JPG" alt="beforeMount"><br><strong>当把render函数和template注释掉时，页面显示</strong><br><img src="test4.JPG" alt="beforeMount"></p>
+<p><strong>综合排名优先级：<font color='red'>render函数选项 &gt; template选项 &gt; outer HTML</font></strong></p>
+<h3 id="mounted-载入后"><a href="#mounted-载入后" class="headerlink" title="mounted(载入后)"></a>mounted(载入后)</h3><blockquote>
+<p><strong>载入后html已经渲染(ajax请求可以放在这个函数中)，把vue实例中的data里的message挂载到BOM节点中去<br>实例被挂载后调用，这时 el 被新创建的 vm.$el 替换了。如果根实例挂载到了一个文档内的元素上，当 mounted 被调用时 vm.$el 也在文档内。</strong></p>
+</blockquote>
+<h3 id="beforeUpdate-更新前-和updated-更新后"><a href="#beforeUpdate-更新前-和updated-更新后" class="headerlink" title="beforeUpdate(更新前)和updated(更新后)"></a>beforeUpdate(更新前)和updated(更新后)</h3><blockquote>
+<p><strong>当vue发现data中的数据发生了改变，会触发对应组件的重新渲染，先后调用beforeUpdate和updated钩子函数。</strong></p>
+</blockquote>
+<p>更改data数据输出结果<br><img src="update.png" alt="beforeMount"></p>
+<h3 id="beforeDestroy-销毁前"><a href="#beforeDestroy-销毁前" class="headerlink" title="beforeDestroy(销毁前)"></a>beforeDestroy(销毁前)</h3><blockquote>
+<p><strong>实例销毁之前调用。在这一步，实例仍然完全可用。</strong></p>
+</blockquote>
+<h3 id="destroyed-销毁后"><a href="#destroyed-销毁后" class="headerlink" title="destroyed(销毁后)"></a>destroyed(销毁后)</h3><blockquote>
+<p><strong>实例销毁后调用。该钩子被调用后，对应 Vue 实例的所有指令都被解绑，所有的事件监听器被移除，所有的子实例也都被销毁。</strong></p>
+</blockquote>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">Author: </span><span class="post-copyright-info"><a href="mailto:undefined">HC-ZHAN</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">Link: </span><span class="post-copyright-info"><a href="http://example.com/2020/05/28/vue-life/">http://example.com/2020/05/28/vue-life/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">Copyright Notice: </span><span class="post-copyright-info">All articles in this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless stating additionally.</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/vue/">vue</a></div><div class="post_share"><div class="social-share" data-image="/2020/05/28/vue-life/logo.jpeg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2020/06/02/js-getUrl/"><img class="prev-cover" src="/2020/06/02/js-getUrl/url.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">Previous Post</div><div class="prev_info">JS获取URL中参数值</div></div></a></div><div class="next-post pull-right"><a href="/2020/05/19/sort-quick/"><img class="next-cover" src="/2020/05/19/sort-quick/quick.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">Next Post</div><div class="next_info">JS快速排序算法</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span> Related Articles</span></div><div class="relatedPosts-list"><div><a href="/2020/04/04/vue-scroll/" title="vue插件-BetterScroll使用"><img class="cover" src="/2020/04/04/vue-scroll/scroll.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-04-04</div><div class="title">vue插件-BetterScroll使用</div></div></a></div></div></div><hr/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> Comment</span></div></div><div class="comment-wrap"><div><div class="vcomment" id="vcomment"></div></div></div></div></div><div class="aside_content" id="aside_content"><div class="card-widget card-info"><div class="card-content"><div class="card-info-avatar is-center"><img class="avatar-img" src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/><div class="author-info__name">HC-ZHAN</div><div class="author-info__description">别说路不平,只是你不行</div></div><div class="card-info-data"><div class="card-info-data-item is-center"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">21</div></a></div><div class="card-info-data-item is-center"><a href="/tags/"><div class="headline">Tags</div><div class="length-num">20</div></a></div><div class="card-info-data-item is-center"><a href="/categories/"><div class="headline">Categories</div><div class="length-num">8</div></a></div></div><a class="button--animated" id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a></div></div><div class="card-widget card-announcement"><div class="card-content"><div class="item-headline"><i class="fas fa-bullhorn card-announcement-animation"></i><span>Announcement</span></div><div class="announcement_content">This is my Blog</div></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="card-content"><div class="item-headline"><i class="fas fa-stream"></i><span>Catalog</span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#vue%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F"><span class="toc-number">1.</span> <span class="toc-text">vue生命周期</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81%E8%AF%A6%E8%A7%A3"><span class="toc-number">2.</span> <span class="toc-text">代码详解</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#beforeCreate-%E5%88%9B%E5%BB%BA%E5%89%8D"><span class="toc-number">2.1.</span> <span class="toc-text">beforeCreate(创建前)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#created-%E5%88%9B%E5%BB%BA%E5%90%8E"><span class="toc-number">2.2.</span> <span class="toc-text">created(创建后)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#beforeMount-%E8%BD%BD%E5%85%A5%E5%89%8D"><span class="toc-number">2.3.</span> <span class="toc-text">beforeMount(载入前)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#mounted-%E8%BD%BD%E5%85%A5%E5%90%8E"><span class="toc-number">2.4.</span> <span class="toc-text">mounted(载入后)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#beforeUpdate-%E6%9B%B4%E6%96%B0%E5%89%8D-%E5%92%8Cupdated-%E6%9B%B4%E6%96%B0%E5%90%8E"><span class="toc-number">2.5.</span> <span class="toc-text">beforeUpdate(更新前)和updated(更新后)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#beforeDestroy-%E9%94%80%E6%AF%81%E5%89%8D"><span class="toc-number">2.6.</span> <span class="toc-text">beforeDestroy(销毁前)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#destroyed-%E9%94%80%E6%AF%81%E5%90%8E"><span class="toc-number">2.7.</span> <span class="toc-text">destroyed(销毁后)</span></a></li></ol></li></ol></div></div></div><div class="card-widget card-recent-post"><div class="card-content"><div class="item-headline"><i class="fas fa-history"></i><span>Recent Post</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2020/12/28/js-rgba/" title="16进制颜色转换RGB原理"><img src="/2020/12/28/js-rgba/rgba.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="16进制颜色转换RGB原理"/></a><div class="content"><a class="title" href="/2020/12/28/js-rgba/" title="16进制颜色转换RGB原理">16进制颜色转换RGB原理</a><time datetime="2020-12-28T03:59:48.000Z" title="Created 2020-12-28 11:59:48">2020-12-28</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2020/12/25/js-Hoisting/" title="变量提升和函数提升"><img src="/2020/12/25/js-Hoisting/hoisting.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="变量提升和函数提升"/></a><div class="content"><a class="title" href="/2020/12/25/js-Hoisting/" title="变量提升和函数提升">变量提升和函数提升</a><time datetime="2020-12-24T16:43:43.000Z" title="Created 2020-12-25 00:43:43">2020-12-25</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2020/12/23/js-storage/" title="前端持久化存储"><img src="/2020/12/23/js-storage/storage.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="前端持久化存储"/></a><div class="content"><a class="title" href="/2020/12/23/js-storage/" title="前端持久化存储">前端持久化存储</a><time datetime="2020-12-23T12:16:04.000Z" title="Created 2020-12-23 20:16:04">2020-12-23</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2020/12/21/js-prototype/" title="js-原型-原型链"><img src="/2020/12/21/js-prototype/proto.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="js-原型-原型链"/></a><div class="content"><a class="title" href="/2020/12/21/js-prototype/" title="js-原型-原型链">js-原型-原型链</a><time datetime="2020-12-21T15:51:09.000Z" title="Created 2020-12-21 23:51:09">2020-12-21</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2020/12/18/css-box/" title="CSS 盒模型"><img src="/2020/12/18/css-box/box.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="CSS 盒模型"/></a><div class="content"><a class="title" href="/2020/12/18/css-box/" title="CSS 盒模型">CSS 盒模型</a><time datetime="2020-12-18T11:42:05.000Z" title="Created 2020-12-18 19:42:05">2020-12-18</time></div></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2021 By HC-ZHAN</div><div class="framework-info"><span>Framework </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>Theme </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="Read Mode"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="Switch Between Light And Dark Mode"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="Toggle between single-column and double-column"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="Setting"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="Table Of Contents"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="Scroll To Comments"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="Back To Top"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><div class="js-pjax"><script>function loadValine () {
+  function initValine () {
+    let initData = {
+      el: '#vcomment',
+      appId: 'mpvHGAn0KBSGL4nUR3TCqdxc-gzGzoHsz',
+      appKey: 'mPvd4d8uiFpFwAG70uRIauwV',
+      placeholder: 'Please leave your footprints',
+      avatar: 'monsterid',
+      meta: 'nick,mail,link'.split(','),
+      pageSize: '10',
+      lang: 'en',
+      recordIP: false,
+      serverURLs: '',
+      emojiCDN: '',
+      emojiMaps: "",
+      enableQQ: false,
+      path: window.location.pathname,
+    }
+
+    if (true) { 
+      initData.requiredFields= ('nick,mail'.split(','))
+    }
+    
+    if (false) {
+      const otherData = false
+      initData = Object.assign({}, initData, otherData)
+    }
+    
+    const valine = new Valine(initData)
+  }
+
+  if (typeof Valine === 'function') initValine() 
+  else getScript('https://cdn.jsdelivr.net/npm/valine/dist/Valine.min.js').then(initValine)
+}
+
+if ('Valine' === 'Valine' || !false) {
+  if (false) btf.loadComment(document.querySelector('#vcomment'),loadValine)
+  else setTimeout(() => loadValine(), 0)
+} else {
+  function loadOtherComment () {
+    loadValine()
+  }
+}</script><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></div></body></html>

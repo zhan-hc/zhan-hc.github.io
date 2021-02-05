@@ -1,0 +1,289 @@
+<!DOCTYPE html><html lang="en" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>前端持久化存储 | 前端笨鸟</title><meta name="keywords" content="js,Cookie,localStorage,sessionStorage"><meta name="author" content="HC-ZHAN"><meta name="copyright" content="HC-ZHAN"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><meta name="description" content="Cookie 定义：Cookie是保存在客户机的文本文件（IE保存在本地的一个txt文件中）, 这个文件与特定的 Web 文档关联在一起, 保存了该客户机访问这个Web 文档时的信息, 当客户机再次访问这个 Web 文档时这些信息可供该文档使用。请求服务器时放在http请求头里面（不论是否需要，都会放在请求头里面） 为什么需要cookie？HTTP是一种无状态的协议，客户端与服务器建立连接并传输数">
+<meta property="og:type" content="article">
+<meta property="og:title" content="前端持久化存储">
+<meta property="og:url" content="http://example.com/2020/12/23/js-storage/index.html">
+<meta property="og:site_name" content="前端笨鸟">
+<meta property="og:description" content="Cookie 定义：Cookie是保存在客户机的文本文件（IE保存在本地的一个txt文件中）, 这个文件与特定的 Web 文档关联在一起, 保存了该客户机访问这个Web 文档时的信息, 当客户机再次访问这个 Web 文档时这些信息可供该文档使用。请求服务器时放在http请求头里面（不论是否需要，都会放在请求头里面） 为什么需要cookie？HTTP是一种无状态的协议，客户端与服务器建立连接并传输数">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/2020/12/23/js-storage/storage.jpg">
+<meta property="article:published_time" content="2020-12-23T12:16:04.000Z">
+<meta property="article:modified_time" content="2020-12-23T13:47:52.111Z">
+<meta property="article:author" content="HC-ZHAN">
+<meta property="article:tag" content="js">
+<meta property="article:tag" content="Cookie">
+<meta property="article:tag" content="localStorage">
+<meta property="article:tag" content="sessionStorage">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2020/12/23/js-storage/storage.jpg"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://example.com/2020/12/23/js-storage/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><script>var GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true},
+  copy: {
+    success: 'Copy successfully',
+    error: 'Copy error',
+    noSupport: 'The browser does not support'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: 'Just',
+    min: 'minutes ago',
+    hour: 'hours ago',
+    day: 'days ago',
+    month: 'months ago'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    jQuery: 'https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js',
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+    },
+    fancybox: {
+      js: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isanchor: false
+};
+
+var saveToLocal = {
+  set: function setWithExpiry(key, value, ttl) {
+    const now = new Date()
+    const expiryDay = ttl * 86400000
+    const item = {
+      value: value,
+      expiry: now.getTime() + expiryDay,
+    }
+    localStorage.setItem(key, JSON.stringify(item))
+  },
+
+  get: function getWithExpiry(key) {
+    const itemStr = localStorage.getItem(key)
+
+    if (!itemStr) {
+      return undefined
+    }
+    const item = JSON.parse(itemStr)
+    const now = new Date()
+
+    if (now.getTime() > item.expiry) {
+      localStorage.removeItem(key)
+      return undefined
+    }
+    return item.value
+  }
+}
+
+// https://stackoverflow.com/questions/16839698/jquery-getscript-alternative-in-native-javascript
+const getScript = url => new Promise((resolve, reject) => {
+  const script = document.createElement('script')
+  script.src = url
+  script.async = true
+  script.onerror = reject
+  script.onload = script.onreadystatechange = function() {
+    const loadState = this.readyState
+    if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+    script.onload = script.onreadystatechange = null
+    resolve()
+  }
+  document.head.appendChild(script)
+})</script><script id="config_change">var GLOBAL_CONFIG_SITE = { 
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2020-12-23 21:47:52'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(function () {  window.activateDarkMode = function () {
+    document.documentElement.setAttribute('data-theme', 'dark')
+    if (document.querySelector('meta[name="theme-color"]') !== null) {
+      document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+    }
+  }
+  window.activateLightMode = function () {
+    document.documentElement.setAttribute('data-theme', 'light')
+   if (document.querySelector('meta[name="theme-color"]') !== null) {
+      document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+    }
+  }
+  const autoChangeMode = 'false'
+  const t = saveToLocal.get('theme')
+  if (autoChangeMode === '1') {
+    const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
+    const isLightMode = window.matchMedia('(prefers-color-scheme: light)').matches
+    const isNotSpecified = window.matchMedia('(prefers-color-scheme: no-preference)').matches
+    const hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
+    if (t === undefined) {
+      if (isLightMode) activateLightMode()
+      else if (isDarkMode) activateDarkMode()
+      else if (isNotSpecified || hasNoSupport) {
+        const now = new Date()
+        const hour = now.getHours()
+        const isNight = hour <= 6 || hour >= 18
+        isNight ? activateDarkMode() : activateLightMode()
+      }
+      window.matchMedia('(prefers-color-scheme: dark)').addListener(function (e) {
+        if (saveToLocal.get('theme') === undefined) {
+          e.matches ? activateDarkMode() : activateLightMode()
+        }
+      })
+    } else if (t === 'light') activateLightMode()
+    else activateDarkMode()
+  } else if (autoChangeMode === '2') {
+    const now = new Date()
+    const hour = now.getHours()
+    const isNight = hour <= 6 || hour >= 18
+    if (t === undefined) isNight ? activateDarkMode() : activateLightMode()
+    else if (t === 'light') activateLightMode()
+    else activateDarkMode()
+  } else {
+    if (t === 'dark') activateDarkMode()
+    else if (t === 'light') activateLightMode()
+  }const asideStatus = saveToLocal.get('aside-status')
+if (asideStatus !== undefined) {
+   if (asideStatus === 'hide') {
+     document.documentElement.classList.add('hide-aside')
+   } else {
+     document.documentElement.classList.remove('hide-aside')
+   }
+}})()</script><meta name="generator" content="Hexo 5.2.0"><link rel="alternate" href="/atom.xml" title="前端笨鸟" type="application/atom+xml">
+</head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="author-avatar"><img class="avatar-img" src="/img/avatar.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data"><div class="data-item is-center"><div class="data-item-link"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">21</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/tags/"><div class="headline">Tags</div><div class="length-num">20</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/categories/"><div class="headline">Categories</div><div class="length-num">8</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><span> Categories</span></a></div></div></div></div><div id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(/2020/12/23/js-storage/storage.jpg)"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">前端笨鸟</a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><span> Categories</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">前端持久化存储</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">Created</span><time class="post-meta-date-created" datetime="2020-12-23T12:16:04.000Z" title="Created 2020-12-23 20:16:04">2020-12-23</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">Updated</span><time class="post-meta-date-updated" datetime="2020-12-23T13:47:52.111Z" title="Updated 2020-12-23 21:47:52">2020-12-23</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">Post View:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h2 id="Cookie"><a href="#Cookie" class="headerlink" title="Cookie"></a>Cookie</h2><ul>
+<li><strong>定义：</strong><br>Cookie是保存在客户机的文本文件（IE保存在本地的一个txt文件中）, 这个文件与特定的 Web 文档关联在一起, 保存了该客户机访问这个Web 文档时的信息, 当客户机再次访问这个 Web 文档时这些信息可供该文档使用。请求服务器时放在http请求头里面（不论是否需要，都会放在请求头里面）</li>
+<li><strong>为什么需要cookie？</strong><br>HTTP是一种无状态的协议，客户端与服务器建立连接并传输数据，数据传输完成后，连接就会关闭。再次交互数据需要建立新的连接，因此，服务器无法从连接上跟踪会话，也无法知道用户上一次做了什么。如：在网络有时候需要用户登录才进一步操作，用户输入用户名密码登录后，浏览了几个页面，由于HTTP的无状态性，服务器并不知道用户有没有登录。但是有了Cookie，服务器在第一次客户端请求的时候，将cookie保存在客户端，客户端重新请求服务器时会携带cookie（未过期），这样服务器就知道上一次用户做了什么。服务器还会对Cookie信息进行维护，必要时会对Cookie内容进行修改。</li>
+<li><strong>场景：</strong><blockquote>
+<p><strong>保存用户登录状态</strong>：例如将用户id存储于一个cookie内，这样当用户下次访问该页面时就不需要重新登录了，现在很多论坛和社区都提供这样的功能。 cookie还可以设置过期时间，当超过时间期限后，cookie就会自动消失。因此，系统往往可以提示用户保持登录状态的时间：常见选项有一个月、三个 月、一年等。<br><strong>跟踪用户行为</strong>：例如一个天气预报网站，能够根据用户选择的地区显示当地的天气情况。如果每次都需要选择所在地是烦琐的，当利用了 cookie后就会显得很人性化了，系统能够记住上一次访问的地区，当下次再打开该页面时，它就会自动显示上次用户所在地区的天气情况。因为一切都是在后 台完成，所以这样的页面就像为某个用户所定制的一样，使用起来非常方便。<br><strong>定制页面</strong>：如果网站提供了换肤或更换布局的功能，那么可以使用cookie来记录用户的选项，例如：背景色、分辨率等。当用户下次访问时，仍然可以保存上一次访问的界面风格。<br><strong>创建购物车</strong>：正如在前面的例子中使用cookie来记录用户需要购买的商品一样，在结账的时候可以统一提交。例如淘宝网就使用cookie记录了用户曾经浏览过的商品，方便随时进行比较。 </p>
+</blockquote>
+</li>
+<li><strong>属性：</strong><table>
+<thead>
+<tr>
+<th align="center">序号</th>
+<th align="center">属性</th>
+<th align="left">解释</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">1</td>
+<td align="center">Expires(http/1.0协议)</td>
+<td align="left">设置Cookie的过期时间</td>
+</tr>
+<tr>
+<td align="center">2</td>
+<td align="center">maxAge(http/1.1协议)</td>
+<td align="left">该Cookie失效的时间，单位秒。是个相对值,相对的是文档第一次被请求时服务器记录的请求时间。如果为正数，则该Cookie在maxAge秒之后失效。如果为负数，关闭浏览器即失效。如果为0，表示删除该Cookie。默认为–1。</td>
+</tr>
+<tr>
+<td align="center">3</td>
+<td align="center">path</td>
+<td align="left">cookie能被使用的路径，默认当前路径 /</td>
+</tr>
+<tr>
+<td align="center">4</td>
+<td align="center">domain</td>
+<td align="left">该Cookie变量所属域</td>
+</tr>
+<tr>
+<td align="center">5</td>
+<td align="center">Secure</td>
+<td align="left">指定是否使用HTTPS安全协议发送Cookie。在网络上传输数据之前先将数据加密。默认为false</td>
+</tr>
+<tr>
+<td align="center">6</td>
+<td align="center">httpOnly</td>
+<td align="left">设置cookie是否能通过 js 去访问,防止客户端脚本通过document.cookie属性访问Cookie，有助于保护Cookie不被跨站脚本攻击窃取或篡改。默认为false</td>
+</tr>
+<tr>
+<td align="center">7</td>
+<td align="center">size</td>
+<td align="left">cookie的大小</td>
+</tr>
+</tbody></table>
+</li>
+<li><strong>缺点：</strong></li>
+<li>每个特定域名下的cookie数量有限</li>
+<li>存储量太小，只有4KB；</li>
+<li>每次HTTP请求都会发送到服务端，影响获取资源的效率；</li>
+<li>需要自己封装获取、设置、删除cookie的方法；</li>
+</ul>
+<h2 id="Web-Storage"><a href="#Web-Storage" class="headerlink" title="Web Storage"></a>Web Storage</h2><p>html5 中的 Web Storage 包括了两种存储方式：<strong>sessionStorage</strong> 和<strong>localStorage</strong>。<br><strong>sessionStorage</strong> 用于本地存储一个会话（session）中的数据，这些数据只有在同一个会话中的页面才能访问，会话结束后数据也随之销毁。<br><strong>localStorage</strong> 用于存储一个域名下的需要永久存在在本地的数据，这些数据可以被一直访问，直到这些数据被删除。<br>因此sessionStorage 和 localStorage 的主要区别在于他们存储数据的生命周期，sessionStorage 存储的数据的生命周期是一个会话，而 localStorage 存储的数据的生命周期是永久，直到被主动删除，否则数据永远不会过期的。</p>
+<h3 id="sessionStorage-和-localStorage异同"><a href="#sessionStorage-和-localStorage异同" class="headerlink" title="sessionStorage 和 localStorage异同"></a>sessionStorage 和 localStorage异同</h3><ul>
+<li><strong>生命周期</strong>：localStorage:localStorage的生命周期是永久的，关闭页面或浏览器之后localStorage中的数据也不会消失。localStorage除非主动删除数据，否则数据永远不会消失。  sessionStorage的生命周期是在仅在当前会话下有效。</li>
+<li><strong>存储大小</strong>：localStorage和sessionStorage的存储数据大小一般都是：5MB  </li>
+<li><strong>存储位置</strong>：localStorage和sessionStorage都保存在客户端，不与服务器进行交互通信。  </li>
+<li><strong>存储内容类型</strong>：localStorage和sessionStorage只能存储字符串类型，对于复杂的对象可以使用ECMAScript提供的JSON对象的stringify和parse来处理  </li>
+<li><strong>获取方式</strong>：localStorage：window.localStorage;；sessionStorage：window.sessionStorage;。 </li>
+<li> <strong>应用场景</strong>：localStoragese：常用于长期登录（+判断用户是否已登录），适合长期保存在本地的数据（令牌）。sessionStorage：敏感账号一次性登录；</li>
+</ul>
+<h2 id="web-storage和cookie的异同"><a href="#web-storage和cookie的异同" class="headerlink" title="web storage和cookie的异同"></a>web storage和cookie的异同</h2><p><strong>共同点：</strong><br><strong>都是保存在浏览器端，且同源的。</strong></p>
+<p><strong>区别：</strong></p>
+<ul>
+<li>存储的大小：cookie：单个cookie保存的数据不能超过4kb；web storage的存储大小5MB</li>
+<li>作用：cookie是用于客户端和服务端间的信息传递；web storage是用于本地大容量存储数据；</li>
+<li>有期时间：cookie可设置失效时间，localstorage除非主动删除；sessionstorage关闭会话窗口失效</li>
+<li></li>
+</ul>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">Author: </span><span class="post-copyright-info"><a href="mailto:undefined">HC-ZHAN</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">Link: </span><span class="post-copyright-info"><a href="http://example.com/2020/12/23/js-storage/">http://example.com/2020/12/23/js-storage/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">Copyright Notice: </span><span class="post-copyright-info">All articles in this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless stating additionally.</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/js/">js</a><a class="post-meta__tags" href="/tags/Cookie/">Cookie</a><a class="post-meta__tags" href="/tags/localStorage/">localStorage</a><a class="post-meta__tags" href="/tags/sessionStorage/">sessionStorage</a></div><div class="post_share"><div class="social-share" data-image="/2020/12/23/js-storage/storage.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2020/12/25/js-Hoisting/"><img class="prev-cover" src="/2020/12/25/js-Hoisting/hoisting.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">Previous Post</div><div class="prev_info">变量提升和函数提升</div></div></a></div><div class="next-post pull-right"><a href="/2020/12/21/js-prototype/"><img class="next-cover" src="/2020/12/21/js-prototype/proto.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">Next Post</div><div class="next_info">js-原型-原型链</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span> Related Articles</span></div><div class="relatedPosts-list"><div><a href="/2020/05/19/sort-quick/" title="JS快速排序算法"><img class="cover" src="/2020/05/19/sort-quick/quick.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-05-19</div><div class="title">JS快速排序算法</div></div></a></div><div><a href="/2020/06/02/js-getUrl/" title="JS获取URL中参数值"><img class="cover" src="/2020/06/02/js-getUrl/url.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-06-02</div><div class="title">JS获取URL中参数值</div></div></a></div><div><a href="/2020/08/05/js-optimal-write/" title="js实现最优打字策略"><img class="cover" src="/2020/08/05/js-optimal-write/write.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-08-05</div><div class="title">js实现最优打字策略</div></div></a></div><div><a href="/2020/08/21/js-compress/" title="压缩算法"><img class="cover" src="/2020/08/21/js-compress/compress.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-08-21</div><div class="title">压缩算法</div></div></a></div><div><a href="/2020/08/25/js-event/" title="JS事件的三个阶段"><img class="cover" src="/2020/08/25/js-event/bg_event.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-08-25</div><div class="title">JS事件的三个阶段</div></div></a></div><div><a href="/2020/08/28/js-new/" title="JS new操作符"><img class="cover" src="/2020/08/28/js-new/new.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-08-28</div><div class="title">JS new操作符</div></div></a></div></div></div><hr/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> Comment</span></div></div><div class="comment-wrap"><div><div class="vcomment" id="vcomment"></div></div></div></div></div><div class="aside_content" id="aside_content"><div class="card-widget card-info"><div class="card-content"><div class="card-info-avatar is-center"><img class="avatar-img" src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/><div class="author-info__name">HC-ZHAN</div><div class="author-info__description">别说路不平,只是你不行</div></div><div class="card-info-data"><div class="card-info-data-item is-center"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">21</div></a></div><div class="card-info-data-item is-center"><a href="/tags/"><div class="headline">Tags</div><div class="length-num">20</div></a></div><div class="card-info-data-item is-center"><a href="/categories/"><div class="headline">Categories</div><div class="length-num">8</div></a></div></div><a class="button--animated" id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a></div></div><div class="card-widget card-announcement"><div class="card-content"><div class="item-headline"><i class="fas fa-bullhorn card-announcement-animation"></i><span>Announcement</span></div><div class="announcement_content">This is my Blog</div></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="card-content"><div class="item-headline"><i class="fas fa-stream"></i><span>Catalog</span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Cookie"><span class="toc-number">1.</span> <span class="toc-text">Cookie</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Web-Storage"><span class="toc-number">2.</span> <span class="toc-text">Web Storage</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#sessionStorage-%E5%92%8C-localStorage%E5%BC%82%E5%90%8C"><span class="toc-number">2.1.</span> <span class="toc-text">sessionStorage 和 localStorage异同</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web-storage%E5%92%8Ccookie%E7%9A%84%E5%BC%82%E5%90%8C"><span class="toc-number">3.</span> <span class="toc-text">web storage和cookie的异同</span></a></li></ol></div></div></div><div class="card-widget card-recent-post"><div class="card-content"><div class="item-headline"><i class="fas fa-history"></i><span>Recent Post</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2020/12/28/js-rgba/" title="16进制颜色转换RGB原理"><img src="/2020/12/28/js-rgba/rgba.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="16进制颜色转换RGB原理"/></a><div class="content"><a class="title" href="/2020/12/28/js-rgba/" title="16进制颜色转换RGB原理">16进制颜色转换RGB原理</a><time datetime="2020-12-28T03:59:48.000Z" title="Created 2020-12-28 11:59:48">2020-12-28</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2020/12/25/js-Hoisting/" title="变量提升和函数提升"><img src="/2020/12/25/js-Hoisting/hoisting.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="变量提升和函数提升"/></a><div class="content"><a class="title" href="/2020/12/25/js-Hoisting/" title="变量提升和函数提升">变量提升和函数提升</a><time datetime="2020-12-24T16:43:43.000Z" title="Created 2020-12-25 00:43:43">2020-12-25</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2020/12/23/js-storage/" title="前端持久化存储"><img src="/2020/12/23/js-storage/storage.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="前端持久化存储"/></a><div class="content"><a class="title" href="/2020/12/23/js-storage/" title="前端持久化存储">前端持久化存储</a><time datetime="2020-12-23T12:16:04.000Z" title="Created 2020-12-23 20:16:04">2020-12-23</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2020/12/21/js-prototype/" title="js-原型-原型链"><img src="/2020/12/21/js-prototype/proto.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="js-原型-原型链"/></a><div class="content"><a class="title" href="/2020/12/21/js-prototype/" title="js-原型-原型链">js-原型-原型链</a><time datetime="2020-12-21T15:51:09.000Z" title="Created 2020-12-21 23:51:09">2020-12-21</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2020/12/18/css-box/" title="CSS 盒模型"><img src="/2020/12/18/css-box/box.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="CSS 盒模型"/></a><div class="content"><a class="title" href="/2020/12/18/css-box/" title="CSS 盒模型">CSS 盒模型</a><time datetime="2020-12-18T11:42:05.000Z" title="Created 2020-12-18 19:42:05">2020-12-18</time></div></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2021 By HC-ZHAN</div><div class="framework-info"><span>Framework </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>Theme </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="Read Mode"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="Switch Between Light And Dark Mode"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="Toggle between single-column and double-column"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="Setting"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="Table Of Contents"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="Scroll To Comments"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="Back To Top"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><div class="js-pjax"><script>function loadValine () {
+  function initValine () {
+    let initData = {
+      el: '#vcomment',
+      appId: 'mpvHGAn0KBSGL4nUR3TCqdxc-gzGzoHsz',
+      appKey: 'mPvd4d8uiFpFwAG70uRIauwV',
+      placeholder: 'Please leave your footprints',
+      avatar: 'monsterid',
+      meta: 'nick,mail,link'.split(','),
+      pageSize: '10',
+      lang: 'en',
+      recordIP: false,
+      serverURLs: '',
+      emojiCDN: '',
+      emojiMaps: "",
+      enableQQ: false,
+      path: window.location.pathname,
+    }
+
+    if (true) { 
+      initData.requiredFields= ('nick,mail'.split(','))
+    }
+    
+    if (false) {
+      const otherData = false
+      initData = Object.assign({}, initData, otherData)
+    }
+    
+    const valine = new Valine(initData)
+  }
+
+  if (typeof Valine === 'function') initValine() 
+  else getScript('https://cdn.jsdelivr.net/npm/valine/dist/Valine.min.js').then(initValine)
+}
+
+if ('Valine' === 'Valine' || !false) {
+  if (false) btf.loadComment(document.querySelector('#vcomment'),loadValine)
+  else setTimeout(() => loadValine(), 0)
+} else {
+  function loadOtherComment () {
+    loadValine()
+  }
+}</script><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></div></body></html>
