@@ -6,7 +6,7 @@
   <link href="http://example.com/atom.xml" rel="self"/>
   
   <link href="http://example.com/"/>
-  <updated>2021-02-09T07:40:41.442Z</updated>
+  <updated>2021-03-23T16:34:54.091Z</updated>
   <id>http://example.com/</id>
   
   <author>
@@ -15,6 +15,34 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>http1.0/1.1/2.0区别</title>
+    <link href="http://example.com/2021/03/23/http/"/>
+    <id>http://example.com/2021/03/23/http/</id>
+    <published>2021-03-23T15:40:51.000Z</published>
+    <updated>2021-03-23T16:34:54.091Z</updated>
+    
+    <content type="html"><![CDATA[<ul><li>http1.0与http1.1区别</li><li>http2.0的特点</li><li>http1.1与http2.0区别</li><li>混淆的问题</li></ul><h2 id="http1-0与http1-1区别"><a href="#http1-0与http1-1区别" class="headerlink" title="http1.0与http1.1区别"></a>http1.0与http1.1区别</h2><ul><li><strong>长连接(Persistent Connection)</strong><blockquote><p>HTTP1.1支持长连接和请求的流水线处理，在一个TCP连接上可以传送多个HTTP请求和响应，减少了建立和关闭连接的消耗和延迟，在HTTP1.1中默认开启长连接keep-alive，一定程度上弥补了HTTP1.0每次请求都要创建连接的缺点。HTTP1.0需要使用keep-alive参数来告知服务器端要建立一个长连接。<br><strong>HTTP 1.1的持续连接，也需要增加新的请求头来帮助实现，例如，Connection请求头的值为<font color="red">Keep-Alive</font>时，客户端通知服务器返回本次请求结果后保持连接；Connection请求头的值为close时，客户端通知服务器返回本次请求结果后关闭连接。HTTP 1.1还提供了与身份认证、状态管理和Cache缓存等机制相关的请求头和响应头。</strong></p></blockquote></li><li><strong>节约带宽</strong><blockquote><p>HTTP1.0中存在一些浪费带宽的现象，例如客户端只是需要某个对象的一部分，而服务器却将整个对象送过来了，并且不支持断点续传功能。HTTP1.1支持只发送header信息（不带任何body信息），如果服务器认为客户端有权限请求服务器，则返回100，客户端接收到100才开始把请求body发送到服务器；如果返回401，客户端就可以不用发送请求body了节约了带宽。</p></blockquote></li><li><strong>HOST域</strong><blockquote><p>在HTTP1.0中认为每台服务器都绑定一个唯一的IP地址，因此，请求消息中的URL并没有传递主机名（hostname），HTTP1.0没有host域。随着虚拟主机技术的发展，在一台物理服务器上可以存在多个虚拟主机（Multi-homed Web Servers），并且它们共享一个IP地址。HTTP1.1的请求消息和响应消息都支持host域，且请求消息中如果没有host域会报告一个错误（400 Bad Request）。</p></blockquote></li><li><strong>请求方法</strong><blockquote><p>HTTP1.1增加了<strong>OPTIONS</strong>，<strong>PUT</strong>，<strong>DELETE</strong>，<strong>TRACE</strong>，<strong>CONNECT</strong>的请求方法。</p></blockquote></li><li><strong>缓存处理</strong><blockquote><p>在HTTP1.0中主要使用header里的If-Modified-Since,Expires来做为缓存判断的标准，HTTP1.1则引入了更多的缓存控制策略例如<strong>Entity tag，If-Unmodified-Since, If-Match, If-None-Match</strong>等更多可供选择的缓存头来控制缓存策略。</p></blockquote></li><li><strong>状态码</strong><blockquote><p>在HTTP1.1中新增了24个错误状态响应码，如409（Conflict）表示请求的资源与资源的当前状态发生冲突；410（Gone）表示服务器上的某个资源被永久性的删除。</p></blockquote></li></ul><h2 id="http2-0的特点"><a href="#http2-0的特点" class="headerlink" title="http2.0的特点"></a>http2.0的特点</h2><ul><li><p><strong>二进制分帧层</strong><br>HTTP 2.0性能增强的核心，全在于新增的<strong>二进制分帧层</strong>，它定义了如何封装HTTP消息并在客户端与服务器之间传输。<br><img src="http4.jpg" alt="http"></p></li><li><p><strong>流、消息和帧</strong></p><ul><li><strong>流</strong>：已建立的连接的双向字节流</li><li><strong>消息</strong>：与逻辑消息对应的完整的一系列数据帧</li><li><strong>帧</strong>：HTTP2.0通信的最小单位，每个帧包含帧首部，至少也会标识出当前帧所属的流</li></ul><p>所有HTTP 2.0通信都在一个连接上完成，这个连接可以承载任意数量的双向数据流。<br>每个数据流以消息的形式发送，而消息由一或多个帧组成，这些帧可以乱序发送，然后再根据每个帧首部的流标识符重新组装。<br><img src="http5.jpg" alt="http"><br>简言之，HTTP 2.0把HTTP协议通信的基本单位缩小为一个一个的帧，这些帧对应着逻辑流中的消息。<br>相应地，很多流可以并行地在同一个TCP连接上交换消息。</p></li><li><p><strong>多向请求与响应</strong><br>在HTTP 1.x中，如果客户端想发送多个并行的请求以及改进性能，那么必须使用多个TCP连接。<br>HTTP 2.0中的二进制分帧层突破了限制：客户端和服务器可以把HTTP消息分解为互不依赖的帧，然后乱序发送，最后再在另一端把它们重新组合起来。<br><img src="http6.jpg" alt="http"></p></li><li><p><strong>请求优先级</strong><br>每个HTTP2.0流里面有个优先值，这个优先值确定着客户端和服务器处理不同的流采取不同的优先级策略，高优先级的流都应该优先发送，但又不会绝对的。绝对地准守，可能又会引入首队阻塞的问题：高优先级的请求慢导致阻塞其他资源交付。分配处理资源和客户端与服务器间的带宽，不同优先级的混合也是必须的。</p><h2 id="http1-1与http2-0区别"><a href="#http1-1与http2-0区别" class="headerlink" title="http1.1与http2.0区别"></a>http1.1与http2.0区别</h2></li><li><p><strong>多路复用</strong></p><blockquote><p>HTTP2.0使用了多路复用的技术，做到同一个连接并发处理多个请求，而且并发请求的数量比HTTP1.1大了好几个数量级。HTTP1.1也可以多建立几个TCP连接，来支持处理更多并发的请求，但是创建TCP连接本身也是有开销的。</p></blockquote></li></ul><p><img src="http2.jpg" alt="http"></p><ul><li><p><strong>头部数据压缩（<a href="https://imququ.com/post/header-compression-in-http2.html">深入了解头部压缩</a>）</strong></p><blockquote><p>在HTTP1.1中，HTTP请求和响应都是由<strong>状态行、请求/响应头部、消息主体</strong>三部分组成。一般而言，消息主体都会经过<strong>gzip压缩</strong>，或者本身传输的就是压缩过后的二进制文件，但状态行和头部却没有经过任何压缩，直接以纯文本传输。随着Web功能越来越复杂，每个页面产生的请求数也越来越多，导致消耗在头部的流量越来越多，尤其是每次都要传输UserAgent、Cookie这类不会频繁变动的内容，完全是一种浪费。<br>HTTP1.1不支持header数据的压缩，HTTP2.0使用HPACK算法对header的数据进行压缩，这样数据体积小了，在网络上传输就会更快。<br><img src="http.webp" alt="http"><br>HTTP 2.0连接的两端都知道已经发送了哪些首部，这些首部的值是什么，从而可以针对之前的数据只编码发送<strong>差异</strong>数据。头部数据通过字典存储(键值对)的形式进行存储<br><img src="http3.jpg" alt="http"></p></blockquote></li><li><p><strong>服务器推送</strong></p><blockquote><p>服务端推送是一种在客户端请求之前发送数据的机制。网页使用了许多资源：HTML、样式表、脚本、图片等等。在HTTP1.1中这些资源每一个都必须明确地请求。这是一个很慢的过程。浏览器从获取HTML开始，然后在它解析和评估页面的时候，增量地获取更多的资源。因为服务器必须等待浏览器做每一个请求，网络经常是空闲的和未充分使用的。<br>为了改善延迟，HTTP2.0引入了server push，它允许服务端推送资源给浏览器，在浏览器明确地请求之前，免得客户端再次创建连接发送请求到服务器端获取。这样客户端可以直接从本地加载这些资源，不用再通过网络。</p></blockquote></li><li><p>普通的客户端请求过程：<br><img src="http_push.webp" alt="http"></p></li><li><p>服务端推送的过程：<br><img src="http_push1.webp" alt="http"></p></li></ul><h2 id="混淆的问题"><a href="#混淆的问题" class="headerlink" title="混淆的问题"></a>混淆的问题</h2><p><strong>HTTP2.0的多路复用和HTTP1.X中的长连接复用有什么区别？</strong></p><p>HTTP/1.0 一次请求-响应，建立一个连接，用完关闭；每一个请求都要建立一个连接；<br>HTTP/1.1 Pipeling解决方式为，若干个请求排队串行化单线程处理，后面的请求等待前面请求的返回才能获得执行机会，一旦有某请求超时等，后续请求只能被阻塞，毫无办法，也就是人们常说的线头阻塞；<br>HTTP/2多个请求可同时在一个连接上并行执行。某个请求任务耗时严重，不会影响到其它连接的正常执行；</p>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;ul&gt;
+&lt;li&gt;http1.0与http1.1区别&lt;/li&gt;
+&lt;li&gt;http2.0的特点&lt;/li&gt;
+&lt;li&gt;http1.1与http2.0区别&lt;/li&gt;
+&lt;li&gt;混淆的问题&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&quot;http1-0与http1-1区别&quot;&gt;&lt;a href=&quot;#htt</summary>
+      
+    
+    
+    
+    
+    <category term="http" scheme="http://example.com/tags/http/"/>
+    
+  </entry>
   
   <entry>
     <title>JS定时器不准确及解决方案</title>
@@ -543,30 +571,6 @@
     
     
     <category term="http" scheme="http://example.com/tags/http/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>vue插件-BetterScroll使用</title>
-    <link href="http://example.com/2020/04/04/vue-scroll/"/>
-    <id>http://example.com/2020/04/04/vue-scroll/</id>
-    <published>2020-04-04T14:19:27.000Z</published>
-    <updated>2020-12-14T03:53:53.119Z</updated>
-    
-    <content type="html"><![CDATA[<p>BetterScroll 是一款重点解决移动端（已支持PC）各种滚动场景需求的插件。它的核心是借鉴的 iscroll 的实现，它的 API 设计基本兼容 iscroll，在 iscroll 的基础上又扩展了一些 feature 以及做了一些性能优化。<br>BetterScroll 提供了很多灵活的 API，当我们基于 better-scroll 去实现一些 feature 的时候，会用到这些 API，了解他们会有助于开发更加复杂的需求。</p><ul><li>使用</li><li>参数</li><li>方法</li></ul><h2 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h2><p>插件的安装请看<a href="https://github.com/ustbhuangyi/better-scroll">BetterScroll</a></p><p><strong>html</strong></p><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;wrapper&quot;</span> <span class="attr">ref</span>=<span class="string">&quot;wrapper&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;container&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br></pre></td></tr></table></figure><p><strong>JS</strong></p><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">this</span>.wrapperScroll = <span class="keyword">new</span> BScroll(<span class="built_in">this</span>.$refs.wrapper, &#123;</span><br><span class="line">click: <span class="literal">true</span> <span class="comment">//还可以添加其他参数(具体看下方)</span></span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure><h2 id="参数"><a href="#参数" class="headerlink" title="参数"></a>参数</h2><ul><li>startX: 0 开始的X轴位置</li><li>startY: 0 开始的Y轴位置</li><li>scrollY: true 滚动方向为 Y 轴</li><li>scrollX: true 滚动方向为 X 轴</li><li>click: true 是否派发click事件，通常判断浏览器派发的click还是betterscroll派发的click</li><li>momentum: true 当快速滑动时是否开启滑动惯性</li><li>bounce: true 是否启用回弹动画效果</li><li>selectedIndex: 0 wheel 为 true 时有效，表示被选中的 wheel 索引</li><li>rotate: 25 wheel 为 true 时有效，表示被选中的 wheel 每一层的旋转角度</li><li>wheel: false 该属性是给 picker 组件使用的，普通的列表滚动不需要配置</li><li>snap: false 该属性是给 slider 组件使用的，普通的列表滚动不需要配置</li><li>snapLoop: false 是否可以无缝循环轮播</li><li>snapThreshold: 0.1 用手指滑动时页面可切换的阈值，大于这个阈值可以滑动的下一页</li><li>snapSpeed: 400, 轮播图切换的动画时间</li><li>swipeTime: 2500 swipe 持续时间</li><li>bounceTime: 700 弹力动画持续的毫秒数</li><li>adjustTime: 400 wheel 为 true 有用，调整停留位置的时间</li><li>swipeBounceTime: 1200 swipe 回弹 时间</li><li>deceleration: 0.001 滚动动量减速越大越快，建议不大于0.01</li><li>momentumLimitTime: 300 符合惯性拖动的最大时间</li><li>momentumLimitDistance: 15 符合惯性拖动的最小拖动距离</li><li>resizePolling: 60 重新调整窗口大小时，重新计算better-scroll的时间间隔</li><li>preventDefault: true 是否阻止默认事件</li><li>useTransition: true 是否使用CSS3的Transition属性</li><li>useTransform: true 是否使用CSS3的Transform属性</li><li>probeType: 1 滚动的时候会派发scroll事件，会截流。2 滚动的时候实时派发scroll事件，不会截流。 3 除了实时派发scroll事件，在swipe的情况下仍然能实时派发scroll事件</li></ul><h2 id="方法"><a href="#方法" class="headerlink" title="方法"></a>方法</h2><h3 id="refresh"><a href="#refresh" class="headerlink" title="refresh()"></a>refresh()</h3><blockquote><p><strong>参数</strong>：无<br><strong>返回值</strong>：无<br><strong>作用</strong>：重新计算 better-scroll，当 DOM结构发生变化的时候务必要调用确保滚动的效果正常。</p></blockquote><h3 id="scrollTo-x-y-time-easing"><a href="#scrollTo-x-y-time-easing" class="headerlink" title="scrollTo(x, y, time, easing)"></a>scrollTo(x, y, time, easing)</h3><blockquote><p><strong>参数</strong>：<br>{Number} x 横轴坐标（单位 px）<br>{Number} y 纵轴坐标（单位 px）<br>{Number} time 滚动动画执行的时长（单位 ms）<br>{Object} easing 缓动函数，一般不建议修改，如果想修改，参考源码中的 ease.js 里的写法<br><strong>返回值</strong>：无<br><strong>作用</strong>：滚动到指定的位置，见 Demo 。</p></blockquote><h3 id="scrollBy-x-y-time-easing"><a href="#scrollBy-x-y-time-easing" class="headerlink" title="scrollBy(x, y, time, easing)"></a>scrollBy(x, y, time, easing)</h3><blockquote><p><strong>参数</strong>：<br>{Number} x 横轴距离（单位 px）<br>{Number} y 纵轴距离（单位 px）<br>{Number} time 滚动动画执行的时长（单位 ms）<br>{Object} easing 缓动函数，一般不建议修改，如果想修改，参考源码中的 ease.js 里的写法<br><strong>返回值</strong>：无<br><strong>作用</strong>：相对于当前位置偏移滚动 x,y 的距离。</p></blockquote><h3 id="scrollToElement-el-time-offsetX-offsetY-easing"><a href="#scrollToElement-el-time-offsetX-offsetY-easing" class="headerlink" title="scrollToElement(el, time, offsetX, offsetY, easing)"></a>scrollToElement(el, time, offsetX, offsetY, easing)</h3><blockquote><p><strong>参数</strong>：<br>{DOM | String} el 滚动到的目标元素, 如果是字符串，则内部会尝试调用 querySelector 转换成 DOM 对象。<br>{Number} time 滚动动画执行的时长（单位 ms）<br>{Number | Boolean} offsetX 相对于目标元素的横轴偏移量，如果设置为 true，则滚到目标元素的中心位置<br>{Number | Boolean} offsetY 相对于目标元素的纵轴偏移量，如果设置为 true，则滚到目标元素的中心位置<br>{Object} easing 缓动函数，一般不建议修改，如果想修改，参考源码中的 ease.js 里的写法<br><strong>返回值</strong>：无<br><strong>作用</strong>：滚动到指定的目标元素。</p></blockquote><h3 id="stop"><a href="#stop" class="headerlink" title="stop()"></a>stop()</h3><blockquote><p><strong>参数</strong>：无<br><strong>返回值</strong>：无<br><strong>作用</strong>：立即停止当前运行的滚动动画。</p></blockquote><h3 id="enable"><a href="#enable" class="headerlink" title="enable()"></a>enable()</h3><blockquote><p><strong>参数</strong>：无<br><strong>返回值</strong>：无<br><strong>作用</strong>：启用 better-scroll, 默认 开启。</p></blockquote><h3 id="disable"><a href="#disable" class="headerlink" title="disable()"></a>disable()</h3><blockquote><p><strong>参数</strong>：无<br><strong>返回值</strong>：无<br>*<em>作用</em>：禁用 better-scroll，DOM 事件（如 touchstart、touchmove、touchend）的回调函数不再响应。</p></blockquote><h3 id="destroy"><a href="#destroy" class="headerlink" title="destroy()"></a>destroy()</h3><blockquote><p><strong>参数</strong>：无<br><strong>返回值</strong>：无<br><strong>作用</strong>：销毁 better-scroll，解绑事件。</p></blockquote>]]></content>
-    
-    
-      
-      
-    <summary type="html">&lt;p&gt;BetterScroll 是一款重点解决移动端（已支持PC）各种滚动场景需求的插件。它的核心是借鉴的 iscroll 的实现，它的 API 设计基本兼容 iscroll，在 iscroll 的基础上又扩展了一些 feature 以及做了一些性能优化。&lt;br&gt;BetterSc</summary>
-      
-    
-    
-    
-    <category term="vue插件" scheme="http://example.com/categories/vue%E6%8F%92%E4%BB%B6/"/>
-    
-    
-    <category term="vue" scheme="http://example.com/tags/vue/"/>
     
   </entry>
   
