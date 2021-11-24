@@ -1,0 +1,274 @@
+<!DOCTYPE html><html lang="en" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>实现大文件切片上传，秒传，续传 | 前端笨鸟</title><meta name="keywords" content="node"><meta name="author" content="HC-ZHAN"><meta name="copyright" content="HC-ZHAN"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><meta name="description" content="大文件切片上传 秒传 断点续传  大文件的切片上传1.大致流程  将大文件切片    分别上传切片至后端    后端接收切片并存储在文件夹    合并切片成大文件，并删除切片和文件夹    1. 实现切片文件File的原型上提供了一个 slice 方法，通过这个方法可以对文件进行切割。以每5m分一个切片。 12345678910111213141516171819202122232425&lt;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="实现大文件切片上传，秒传，续传">
+<meta property="og:url" content="http://example.com/2021/11/23/chunk-upload/index.html">
+<meta property="og:site_name" content="前端笨鸟">
+<meta property="og:description" content="大文件切片上传 秒传 断点续传  大文件的切片上传1.大致流程  将大文件切片    分别上传切片至后端    后端接收切片并存储在文件夹    合并切片成大文件，并删除切片和文件夹    1. 实现切片文件File的原型上提供了一个 slice 方法，通过这个方法可以对文件进行切割。以每5m分一个切片。 12345678910111213141516171819202122232425&lt;">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/2021/11/23/chunk-upload/unique.jpg">
+<meta property="article:published_time" content="2021-11-23T06:56:30.000Z">
+<meta property="article:modified_time" content="2021-11-24T07:26:12.616Z">
+<meta property="article:author" content="HC-ZHAN">
+<meta property="article:tag" content="node">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2021/11/23/chunk-upload/unique.jpg"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://example.com/2021/11/23/chunk-upload/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><script>var GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true},
+  copy: {
+    success: 'Copy successfully',
+    error: 'Copy error',
+    noSupport: 'The browser does not support'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: 'Just',
+    min: 'minutes ago',
+    hour: 'hours ago',
+    day: 'days ago',
+    month: 'months ago'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    jQuery: 'https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js',
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+    },
+    fancybox: {
+      js: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isanchor: false
+};
+
+var saveToLocal = {
+  set: function setWithExpiry(key, value, ttl) {
+    const now = new Date()
+    const expiryDay = ttl * 86400000
+    const item = {
+      value: value,
+      expiry: now.getTime() + expiryDay,
+    }
+    localStorage.setItem(key, JSON.stringify(item))
+  },
+
+  get: function getWithExpiry(key) {
+    const itemStr = localStorage.getItem(key)
+
+    if (!itemStr) {
+      return undefined
+    }
+    const item = JSON.parse(itemStr)
+    const now = new Date()
+
+    if (now.getTime() > item.expiry) {
+      localStorage.removeItem(key)
+      return undefined
+    }
+    return item.value
+  }
+}
+
+// https://stackoverflow.com/questions/16839698/jquery-getscript-alternative-in-native-javascript
+const getScript = url => new Promise((resolve, reject) => {
+  const script = document.createElement('script')
+  script.src = url
+  script.async = true
+  script.onerror = reject
+  script.onload = script.onreadystatechange = function() {
+    const loadState = this.readyState
+    if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+    script.onload = script.onreadystatechange = null
+    resolve()
+  }
+  document.head.appendChild(script)
+})</script><script id="config_change">var GLOBAL_CONFIG_SITE = { 
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2021-11-24 15:26:12'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(function () {  window.activateDarkMode = function () {
+    document.documentElement.setAttribute('data-theme', 'dark')
+    if (document.querySelector('meta[name="theme-color"]') !== null) {
+      document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+    }
+  }
+  window.activateLightMode = function () {
+    document.documentElement.setAttribute('data-theme', 'light')
+   if (document.querySelector('meta[name="theme-color"]') !== null) {
+      document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+    }
+  }
+  const autoChangeMode = 'false'
+  const t = saveToLocal.get('theme')
+  if (autoChangeMode === '1') {
+    const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
+    const isLightMode = window.matchMedia('(prefers-color-scheme: light)').matches
+    const isNotSpecified = window.matchMedia('(prefers-color-scheme: no-preference)').matches
+    const hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
+    if (t === undefined) {
+      if (isLightMode) activateLightMode()
+      else if (isDarkMode) activateDarkMode()
+      else if (isNotSpecified || hasNoSupport) {
+        const now = new Date()
+        const hour = now.getHours()
+        const isNight = hour <= 6 || hour >= 18
+        isNight ? activateDarkMode() : activateLightMode()
+      }
+      window.matchMedia('(prefers-color-scheme: dark)').addListener(function (e) {
+        if (saveToLocal.get('theme') === undefined) {
+          e.matches ? activateDarkMode() : activateLightMode()
+        }
+      })
+    } else if (t === 'light') activateLightMode()
+    else activateDarkMode()
+  } else if (autoChangeMode === '2') {
+    const now = new Date()
+    const hour = now.getHours()
+    const isNight = hour <= 6 || hour >= 18
+    if (t === undefined) isNight ? activateDarkMode() : activateLightMode()
+    else if (t === 'light') activateLightMode()
+    else activateDarkMode()
+  } else {
+    if (t === 'dark') activateDarkMode()
+    else if (t === 'light') activateLightMode()
+  }const asideStatus = saveToLocal.get('aside-status')
+if (asideStatus !== undefined) {
+   if (asideStatus === 'hide') {
+     document.documentElement.classList.add('hide-aside')
+   } else {
+     document.documentElement.classList.remove('hide-aside')
+   }
+}})()</script><meta name="generator" content="Hexo 5.2.0"><link rel="alternate" href="/atom.xml" title="前端笨鸟" type="application/atom+xml">
+</head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="author-avatar"><img class="avatar-img" src="/img/avatar.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data"><div class="data-item is-center"><div class="data-item-link"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">25</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/tags/"><div class="headline">Tags</div><div class="length-num">21</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/categories/"><div class="headline">Categories</div><div class="length-num">8</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><span> Categories</span></a></div></div></div></div><div id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(/2021/11/23/chunk-upload/unique.jpg)"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">前端笨鸟</a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><span> Categories</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">实现大文件切片上传，秒传，续传</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">Created</span><time class="post-meta-date-created" datetime="2021-11-23T06:56:30.000Z" title="Created 2021-11-23 14:56:30">2021-11-23</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">Updated</span><time class="post-meta-date-updated" datetime="2021-11-24T07:26:12.616Z" title="Updated 2021-11-24 15:26:12">2021-11-24</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/vue/">vue</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">Post View:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><ul>
+<li>大文件切片上传</li>
+<li>秒传</li>
+<li>断点续传</li>
+</ul>
+<h2 id="大文件的切片上传"><a href="#大文件的切片上传" class="headerlink" title="大文件的切片上传"></a>大文件的切片上传</h2><h3 id="1-大致流程"><a href="#1-大致流程" class="headerlink" title="1.大致流程"></a>1.大致流程</h3><ul>
+<li><ol>
+<li>将大文件切片</li>
+</ol>
+</li>
+<li><ol start="2">
+<li>分别上传切片至后端</li>
+</ol>
+</li>
+<li><ol start="3">
+<li>后端接收切片并存储在文件夹</li>
+</ol>
+</li>
+<li><ol start="4">
+<li>合并切片成大文件，并删除切片和文件夹<br><img src="chunk.PNG" alt="切片上传流程"></li>
+</ol>
+</li>
+</ul>
+<h3 id="1-实现切片"><a href="#1-实现切片" class="headerlink" title="1. 实现切片"></a><strong>1. 实现切片</strong></h3><p>文件File的原型上提供了一个 <strong>slice</strong> 方法，通过这个方法可以对文件进行切割。以每5m分一个切片。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">&lt;input type=<span class="string">&quot;file&quot;</span>  @change=<span class="string">&quot;handleFileChange&quot;</span>/&gt;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">data</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> &#123;</span><br><span class="line">        chunkList: [],</span><br><span class="line">        file: <span class="literal">null</span></span><br><span class="line">    &#125;;</span><br><span class="line">&#125;,</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">handleFileChange</span> (<span class="params">e</span>) </span>&#123;</span><br><span class="line">   <span class="built_in">this</span>.file = e. target.files[<span class="number">0</span>]</span><br><span class="line">    <span class="built_in">this</span>.chunkList = createChunk(<span class="built_in">this</span>.file)</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="built_in">this</span>.chunkList)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">createChunk</span> (<span class="params">file, size = <span class="number">5</span> * <span class="number">1024</span> * <span class="number">1024</span></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">let</span> chunks = []</span><br><span class="line">    <span class="keyword">let</span> cur = <span class="number">0</span></span><br><span class="line">    <span class="keyword">while</span>(cur &lt; file.size) &#123;</span><br><span class="line">        chunks.push(&#123;<span class="attr">file</span>:file.slice(cur,cur+size)&#125;)</span><br><span class="line">        cur += size</span><br><span class="line">   &#125;</span><br><span class="line">    <span class="keyword">return</span> chunks</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>我上传了个9.6m左右大小的文件，每片以5m分割，看log输出可以看到文件被切分成了两片，这样就实现了切片的效果<br><img src="slice.PNG" alt="切片"></p>
+<h3 id="2-上传切片"><a href="#2-上传切片" class="headerlink" title="2. 上传切片"></a><strong>2. 上传切片</strong></h3><p>设置接口接收文件类型和进度条<br><strong>onUploadProgress</strong>是axios的进度条事件</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="function"><span class="keyword">function</span> <span class="title">uploadFile</span>(<span class="params">param, cb</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> axios(&#123;</span><br><span class="line">        url: <span class="string">`/upload/file`</span>,</span><br><span class="line">        method: <span class="string">&#x27;POST&#x27;</span>,</span><br><span class="line">        data: param,</span><br><span class="line">        headers: &#123;</span><br><span class="line">            <span class="string">&#x27;Content-Type&#x27;</span>: <span class="string">&#x27;multipart/form-data&#x27;</span></span><br><span class="line">        &#125;,</span><br><span class="line">        onUploadProgress:cb</span><br><span class="line">    &#125;)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<hr>
+<p>首先我们需要组装一下chunkList，将所需要的参数填充进去<br><font color='red'> 切片名称拼接索引， </font> 是为了后续续传的告诉前端已经上传的切片。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">fillParams</span> (<span class="params">files, chunkList</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">const</span> suffix = files.name.lastIndexOf(<span class="string">&#x27;.&#x27;</span>)</span><br><span class="line">    <span class="keyword">const</span> fileName = files.name.slice(<span class="number">0</span>,suffix) <span class="comment">// 获取文件名称</span></span><br><span class="line">    <span class="keyword">let</span> chunkFile = chunkList.map( <span class="function">(<span class="params">&#123; file &#125;, index</span>) =&gt;</span> (&#123;</span><br><span class="line">        file,</span><br><span class="line">        size: file.size,</span><br><span class="line">        percent: <span class="number">0</span>, <span class="comment">// 上传进度</span></span><br><span class="line">        chunkName: <span class="string">`<span class="subst">$&#123;fileName&#125;</span>-<span class="subst">$&#123;index&#125;</span>`</span>,</span><br><span class="line">        fileName: fileName,</span><br><span class="line">        index</span><br><span class="line">    &#125;))</span><br><span class="line">    <span class="keyword">return</span> chunkFile</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<hr>
+<p>将所需的参数通过 <strong>FormData</strong> 传递给后端<br>其中 <strong>e.loaded</strong> 表示当前上传的数据大小，<strong>e.total</strong> 表示整个要上传的数据大小</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">async</span> <span class="title">handleFileChange</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">const</span> _self = <span class="built_in">this</span></span><br><span class="line">    <span class="built_in">this</span>.file = e.target.files[<span class="number">0</span>]</span><br><span class="line">    <span class="built_in">this</span>.chunkList = fillParams(createChunk(<span class="built_in">this</span>.file))</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> reqList = <span class="built_in">this</span>.chunkList.map(<span class="function">(<span class="params">item,index</span>) =&gt;</span> &#123;</span><br><span class="line">        <span class="keyword">const</span> formData = <span class="keyword">new</span> FormData()</span><br><span class="line">        formData.append(<span class="string">&quot;file&quot;</span>, item.file)</span><br><span class="line">        formData.append(<span class="string">&quot;fileName&quot;</span>,  item.fileName)</span><br><span class="line">        formData.append(<span class="string">&quot;chunkName&quot;</span>,  item.chunkName)</span><br><span class="line">        <span class="keyword">return</span> &#123;</span><br><span class="line">            formData,</span><br><span class="line">            index</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;).map(<span class="function">(<span class="params">&#123;formData,index&#125;</span>) =&gt;</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> uploadFile(formData,<span class="function">(<span class="params">e</span>) =&gt;</span> &#123;</span><br><span class="line">            <span class="comment">// 设置每个切片的进度比  </span></span><br><span class="line">            _self.chunkList[index].percent =  <span class="built_in">parseInt</span>(<span class="built_in">String</span>((e.loaded / e.total) * <span class="number">100</span>))</span><br><span class="line">        &#125;)</span><br><span class="line">    &#125;)</span><br><span class="line">    <span class="keyword">await</span> <span class="built_in">Promise</span>.all(reqList)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<hr>
+<h3 id="3-后端处理切片"><a href="#3-后端处理切片" class="headerlink" title="3. 后端处理切片"></a><strong>3. 后端处理切片</strong></h3><h4 id="将切片存储到文件夹中"><a href="#将切片存储到文件夹中" class="headerlink" title="将切片存储到文件夹中"></a><strong>将切片存储到文件夹中</strong></h4><p>后端的话我是用node的koa来模拟实现一下<br>上传的话通过<a target="_blank" rel="noopener" href="https://www.cnblogs.com/wjlbk/p/12633320.html">koa-multer</a>中间件来实现。具体用法可以参考链接，这里就不贴出来啦。<br><strong>koa-multer</strong>中间件不能通过动态参数存储在动态路径，所以需要我们手动的去移动切片到文件夹中。<br><strong>fs.rename</strong>修改文件名称,更改文件的存放路径。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">router.post(<span class="string">&#x27;/file&#x27;</span>, upload.single(<span class="string">&#x27;file&#x27;</span>), <span class="keyword">async</span>(ctx, next) =&gt; &#123;</span><br><span class="line">  <span class="keyword">const</span> folderName = ctx.req.body.fileName <span class="comment">// 临时存储的文件夹名称（对应切片的fileName）</span></span><br><span class="line">  <span class="keyword">const</span> fileName = ctx.req.file.filename <span class="comment">// 中间件上传后切片的名称</span></span><br><span class="line">  <span class="keyword">const</span> chunkName = <span class="string">`<span class="subst">$&#123;ctx.req.body.chunkName&#125;</span>.<span class="subst">$&#123;ctx.req.file.originalname&#125;</span>`</span></span><br><span class="line">  <span class="keyword">const</span> folderPath = path.join(__dirname,<span class="string">`../../public/file/<span class="subst">$&#123;folderName&#125;</span>`</span>)</span><br><span class="line">    <span class="comment">// 判断文件夹是否存在</span></span><br><span class="line">    <span class="keyword">if</span> (!fs.existsSync(folderPath)) &#123;</span><br><span class="line">      fs.mkdir(folderPath, <span class="function"><span class="params">err</span> =&gt;</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (err) <span class="keyword">throw</span> err;</span><br><span class="line">      &#125;);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">await</span> moveFile(fileName,folderName,chunkName)</span><br><span class="line">  ctx.success(fileName,<span class="string">&#x27;上传切片成功&#x27;</span>)</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">// 移动文件</span></span><br><span class="line"><span class="keyword">const</span> moveFile = <span class="keyword">async</span> <span class="function"><span class="keyword">function</span> (<span class="params">fileName,movePath,newFileName</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> chunkPath = path.join(__dirname, <span class="string">`../public/file/<span class="subst">$&#123;fileName&#125;</span>`</span>); <span class="comment">// 切片的路径</span></span><br><span class="line">  <span class="keyword">var</span> destPath = path.join(__dirname, <span class="string">`../public/file/<span class="subst">$&#123;movePath&#125;</span>`</span>, newFileName); </span><br><span class="line">  fs.rename(chunkPath, destPath, <span class="function"><span class="keyword">function</span> (<span class="params">err</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (err) <span class="keyword">throw</span> err;</span><br><span class="line">  &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<hr>
+<p>每个切片上传的size = 当前切片进度 * 当前切片size<br><strong>总进度 totalPercent = 每个切片上传的size ➗ 文件总size</strong></p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">computed: &#123;</span><br><span class="line">    totalPercent () &#123;</span><br><span class="line">        <span class="keyword">let</span> percent = <span class="built_in">this</span>.chunkList.map(<span class="function">(<span class="params">&#123;size,percent&#125;</span>) =&gt;</span> size * percent)</span><br><span class="line">            .reduce(<span class="function">(<span class="params">prev, curr</span>) =&gt;</span> prev + curr)</span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">parseInt</span>((percent/<span class="built_in">this</span>.file.size).toFixed(<span class="number">2</span>))</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<img src="chunkUpload.gif" width="300" height="400" />
+
+<h3 id="4-合并切片"><a href="#4-合并切片" class="headerlink" title="4. 合并切片"></a><strong>4. 合并切片</strong></h3><p>切片上传完成之后，发送一个merge请求，让后端合并切片</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> pipeStream = <span class="function">(<span class="params">path, writeStream</span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function"><span class="params">resolve</span> =&gt;</span> &#123;</span><br><span class="line">      <span class="keyword">const</span> readStream = fs.createReadStream(path);</span><br><span class="line">      readStream.on(<span class="string">&quot;end&quot;</span>, <span class="function">() =&gt;</span> &#123;</span><br><span class="line">          fs.unlinkSync(path); <span class="comment">// 删除切片</span></span><br><span class="line">          resolve();</span><br><span class="line">      &#125;);</span><br><span class="line">      readStream.pipe(writeStream);</span><br><span class="line">  &#125;);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 合并切片 (filePath：将切片合并的路径)</span></span><br><span class="line"><span class="keyword">const</span> mergeFileChunk = <span class="keyword">async</span> (filePath, chunkName, size = <span class="number">5</span> * <span class="number">1024</span> * <span class="number">1024</span>) =&gt; &#123;</span><br><span class="line">  <span class="keyword">const</span> chunkDir = path.join(__dirname,<span class="string">`../public/file/<span class="subst">$&#123;chunkName&#125;</span>`</span>) <span class="comment">// 切片文件路径</span></span><br><span class="line">  <span class="keyword">let</span> chunkPaths = fs.readdirSync(<span class="string">`public/file/<span class="subst">$&#123;chunkName&#125;</span>`</span>)   <span class="comment">// 获取切片文件夹里所有切片</span></span><br><span class="line">  <span class="comment">// 根据切片索引进行排序，因为是异步请求所以文件顺序与文件读取顺序不一定一致</span></span><br><span class="line">  <span class="keyword">const</span> eq = <span class="function">(<span class="params">str</span>) =&gt;</span> <span class="built_in">parseInt</span>(str.slice(str.lastIndexOf(<span class="string">&#x27;-&#x27;</span>)+<span class="number">1</span>,str.lastIndexOf(<span class="string">&#x27;.&#x27;</span>)))</span><br><span class="line">  chunkPaths.sort(<span class="function">(<span class="params">a, b</span>) =&gt;</span> eq(a) - eq(b))</span><br><span class="line">  <span class="keyword">const</span> arr = chunkPaths.map(<span class="function">(<span class="params">chunk, index</span>) =&gt;</span> &#123;</span><br><span class="line">      <span class="keyword">return</span> pipeStream(</span><br><span class="line">          path.resolve(chunkDir, chunk),</span><br><span class="line">          <span class="comment">// 指定位置创建可写流</span></span><br><span class="line">          fs.createWriteStream(filePath, &#123;</span><br><span class="line">              start: index * size,</span><br><span class="line">              end: (index + <span class="number">1</span>) * size</span><br><span class="line">          &#125;)</span><br><span class="line">      )</span><br><span class="line">  &#125;)</span><br><span class="line">  <span class="keyword">await</span> <span class="built_in">Promise</span>.all(arr)</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">router.post(<span class="string">&#x27;/mergeChunkFile&#x27;</span>, <span class="keyword">async</span>(ctx, next) =&gt; &#123;</span><br><span class="line">  <span class="keyword">const</span> &#123;fileName, chunkName&#125; = ctx.request.body</span><br><span class="line">  <span class="comment">// 存放切块的路径</span></span><br><span class="line">  <span class="keyword">const</span> mergePath = path.join(__dirname,<span class="string">`../../public/file/mergeFile/<span class="subst">$&#123;fileName&#125;</span>`</span>)</span><br><span class="line">  <span class="keyword">await</span> mergeFileChunk(mergePath,chunkName)</span><br><span class="line">  fs.rmdirSync(path.join(__dirname,<span class="string">`../../public/file/<span class="subst">$&#123;chunkName&#125;</span>`</span>)) <span class="comment">// 删除存储切片的文件夹</span></span><br><span class="line"> </span><br><span class="line">  ctx.success(fileName,<span class="string">&#x27;合并文件成功&#x27;</span>)</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<p>上传成功后，可以看到合并后的音乐已经存到了mergeFile文件夹了，并且切片文件夹已经删除。</p>
+<p><img src="merge.PNG" alt="merge"></p>
+<hr>
+<h2 id="大文件秒传"><a href="#大文件秒传" class="headerlink" title="大文件秒传"></a>大文件秒传</h2><p>秒传的实现原理其实就是后端去校验文件是否已经上传，是的返回上传成功给前端。<br>秒传关键在于怎么校验文件是否已经上传？用文件名来校验肯定是不靠谱的，真实场景的话是通过文件的hash值来校验<br>那么前端怎么生成文件的hash值呢？<br>本篇是通过一个<a target="_blank" rel="noopener" href="https://github.com/satazor/js-spark-md5">spark-md5</a>插件来生成的,具体用法可参考链接。<br>后端的话通过node的<strong>crypto</strong>模块生成文件的hash</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">router.post(<span class="string">&#x27;/verifyFile&#x27;</span>, <span class="keyword">async</span>(ctx, next) =&gt; &#123;</span><br><span class="line">  <span class="keyword">const</span> &#123;hash&#125; = ctx.request.body</span><br><span class="line">  <span class="keyword">const</span> shouldUpload = hasFile(hash)</span><br><span class="line"> ctx.success(&#123;shouldUpload&#125;,<span class="string">&#x27;校验成功&#x27;</span>)</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 文件hash校验</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">hasFile</span> (<span class="params">hash</span>) </span>&#123;</span><br><span class="line">  filePaths = fs.readdirSync(<span class="string">`public/file/mergeFile`</span>)</span><br><span class="line">  <span class="keyword">const</span> len = filePaths.length</span><br><span class="line">  <span class="keyword">let</span> flag = <span class="literal">true</span></span><br><span class="line">  <span class="keyword">for</span>(<span class="keyword">let</span> i = <span class="number">0</span>;i&lt;len;i++) &#123;</span><br><span class="line">    <span class="keyword">const</span> hash = createHash(filePaths[i])</span><br><span class="line">    <span class="keyword">if</span> (fileHash === hash)&#123;</span><br><span class="line">      flag = <span class="literal">false</span></span><br><span class="line">      <span class="keyword">break</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> flag</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 获取文件hash</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">createHash</span> (<span class="params">fileName</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">const</span> buffer = fs.readFileSync(path.join(__dirname,<span class="string">`../public/file/mergeFile/<span class="subst">$&#123;fileName&#125;</span>`</span>));</span><br><span class="line">  <span class="keyword">const</span> fsHash = crypto.createHash(<span class="string">&#x27;md5&#x27;</span>);</span><br><span class="line">  fsHash.update(buffer);</span><br><span class="line">  <span class="keyword">const</span> md5 = fsHash.digest(<span class="string">&#x27;hex&#x27;</span>);</span><br><span class="line">  <span class="keyword">return</span> md5</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<hr>
+<h2 id="大文件续传"><a href="#大文件续传" class="headerlink" title="大文件续传"></a>大文件续传</h2><p>续传的原理就是当一个大文件切分成了10个切片，上传了5个切片的时候被暂停了，点击续传的时候后端需要告诉前端已经上传的切片索引，前端再根据后端返回的索引并过滤掉他们从新请求未上传的切片<br><strong>思考：前端要怎么暂停请求？</strong><br><strong>CancelToken</strong>是axios提供取消ajax请求的，我们可以通过这个来实现</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">&lt;button @click=<span class="string">&quot;pauseUpload&quot;</span>&gt;暂停&lt;/button&gt;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="function"><span class="keyword">function</span> <span class="title">uploadFile</span>(<span class="params">param, cb,cancelToken</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> axios(&#123;</span><br><span class="line">        url: <span class="string">`/upload/file`</span>,</span><br><span class="line">        method: <span class="string">&#x27;POST&#x27;</span>,</span><br><span class="line">        data: param,</span><br><span class="line">        headers: &#123;</span><br><span class="line">            <span class="string">&#x27;Content-Type&#x27;</span>: <span class="string">&#x27;multipart/form-data&#x27;</span></span><br><span class="line">        &#125;,</span><br><span class="line">        onUploadProgress:cb,</span><br><span class="line">        cancelToken</span><br><span class="line">    &#125;)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> CancelToken = axios.CancelToken;</span><br><span class="line"><span class="keyword">let</span> source = CancelToken.source();</span><br><span class="line"><span class="comment">// 截取部分前面的请求代码</span></span><br><span class="line">map(<span class="function">(<span class="params">&#123;formData,index&#125;</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> uploadFile(formData,<span class="function">(<span class="params">e</span>) =&gt;</span> &#123;</span><br><span class="line">        _self.chunkList[index].percent =  <span class="built_in">parseInt</span>(<span class="built_in">String</span>((e.loaded / e.total) * <span class="number">100</span>))</span><br><span class="line">    &#125;,source.token) <span class="comment">// 主要代码在这里</span></span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 暂停</span></span><br><span class="line"><span class="keyword">const</span> pauseUpload = <span class="function">() =&gt;</span> &#123;</span><br><span class="line">    source.cancel(<span class="string">&quot;中断上传!&quot;</span>);</span><br><span class="line">    source = CancelToken.source(); </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p>后端实现校验需要 文件夹的名称，切片总数字段</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// uploadChunk已上传的切片索引</span></span><br><span class="line"><span class="keyword">const</span> filePath = path.join(__dirname,<span class="string">`../../public/file/<span class="subst">$&#123;chunkName&#125;</span>`</span>)</span><br><span class="line"><span class="keyword">if</span> (fs.existsSync(filePath)) &#123;</span><br><span class="line">     chunkFiles = fs.readdirSync(<span class="string">`public/file/<span class="subst">$&#123;chunkName&#125;</span>`</span>)</span><br><span class="line">     <span class="keyword">if</span> (chunkFiles.length &lt; chunkLen) &#123;</span><br><span class="line">        <span class="keyword">const</span> eq = <span class="function">(<span class="params">str</span>) =&gt;</span> <span class="built_in">parseInt</span>(str.slice(str.lastIndexOf(<span class="string">&#x27;-&#x27;</span>)+<span class="number">1</span>,str.lastIndexOf(<span class="string">&#x27;.&#x27;</span>)))</span><br><span class="line">        <span class="keyword">const</span> uploadChunk = chunkFiles.map(<span class="function"><span class="params">item</span> =&gt;</span> eq(item))</span><br><span class="line">     &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>前端根据后端返回的索引，进行过滤</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">chunkList.filter(<span class="function"><span class="params">item</span> =&gt;</span> !uploadChunk.includes(item.index))</span><br></pre></td></tr></table></figure>
+
+<p>来看看具体效果<br><img src="continueUpload.gif" width="300" height="400" /></p>
+<p>大部分参考掘金作者三心的<a target="_blank" rel="noopener" href="https://juejin.cn/user/1292681407377624">文章</a>实现。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">Author: </span><span class="post-copyright-info"><a href="mailto:undefined">HC-ZHAN</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">Link: </span><span class="post-copyright-info"><a href="http://example.com/2021/11/23/chunk-upload/">http://example.com/2021/11/23/chunk-upload/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">Copyright Notice: </span><span class="post-copyright-info">All articles in this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless stating additionally.</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/node/">node</a></div><div class="post_share"><div class="social-share" data-image="/2021/11/23/chunk-upload/unique.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="next-post pull-full"><a href="/2021/07/20/tree-inventScroll/"><img class="next-cover" src="/2021/07/20/tree-inventScroll/tree.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">Next Post</div><div class="next_info">树组件实现虚拟滚动</div></div></a></div></nav><hr/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> Comment</span></div></div><div class="comment-wrap"><div><div class="vcomment" id="vcomment"></div></div></div></div></div><div class="aside_content" id="aside_content"><div class="card-widget card-info"><div class="card-content"><div class="card-info-avatar is-center"><img class="avatar-img" src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/><div class="author-info__name">HC-ZHAN</div><div class="author-info__description">别说路不平,只是你不行</div></div><div class="card-info-data"><div class="card-info-data-item is-center"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">25</div></a></div><div class="card-info-data-item is-center"><a href="/tags/"><div class="headline">Tags</div><div class="length-num">21</div></a></div><div class="card-info-data-item is-center"><a href="/categories/"><div class="headline">Categories</div><div class="length-num">8</div></a></div></div><a class="button--animated" id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a></div></div><div class="card-widget card-announcement"><div class="card-content"><div class="item-headline"><i class="fas fa-bullhorn card-announcement-animation"></i><span>Announcement</span></div><div class="announcement_content">This is my Blog</div></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="card-content"><div class="item-headline"><i class="fas fa-stream"></i><span>Catalog</span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A4%A7%E6%96%87%E4%BB%B6%E7%9A%84%E5%88%87%E7%89%87%E4%B8%8A%E4%BC%A0"><span class="toc-number">1.</span> <span class="toc-text">大文件的切片上传</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%A4%A7%E8%87%B4%E6%B5%81%E7%A8%8B"><span class="toc-number">1.1.</span> <span class="toc-text">1.大致流程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%AE%9E%E7%8E%B0%E5%88%87%E7%89%87"><span class="toc-number">1.2.</span> <span class="toc-text">1. 实现切片</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E4%B8%8A%E4%BC%A0%E5%88%87%E7%89%87"><span class="toc-number">1.3.</span> <span class="toc-text">2. 上传切片</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E5%90%8E%E7%AB%AF%E5%A4%84%E7%90%86%E5%88%87%E7%89%87"><span class="toc-number">1.4.</span> <span class="toc-text">3. 后端处理切片</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%B0%86%E5%88%87%E7%89%87%E5%AD%98%E5%82%A8%E5%88%B0%E6%96%87%E4%BB%B6%E5%A4%B9%E4%B8%AD"><span class="toc-number">1.4.1.</span> <span class="toc-text">将切片存储到文件夹中</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E5%90%88%E5%B9%B6%E5%88%87%E7%89%87"><span class="toc-number">1.5.</span> <span class="toc-text">4. 合并切片</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A4%A7%E6%96%87%E4%BB%B6%E7%A7%92%E4%BC%A0"><span class="toc-number">2.</span> <span class="toc-text">大文件秒传</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A4%A7%E6%96%87%E4%BB%B6%E7%BB%AD%E4%BC%A0"><span class="toc-number">3.</span> <span class="toc-text">大文件续传</span></a></li></ol></div></div></div><div class="card-widget card-recent-post"><div class="card-content"><div class="item-headline"><i class="fas fa-history"></i><span>Recent Post</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2021/11/23/chunk-upload/" title="实现大文件切片上传，秒传，续传"><img src="/2021/11/23/chunk-upload/unique.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="实现大文件切片上传，秒传，续传"/></a><div class="content"><a class="title" href="/2021/11/23/chunk-upload/" title="实现大文件切片上传，秒传，续传">实现大文件切片上传，秒传，续传</a><time datetime="2021-11-23T06:56:30.000Z" title="Created 2021-11-23 14:56:30">2021-11-23</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2021/07/20/tree-inventScroll/" title="树组件实现虚拟滚动"><img src="/2021/07/20/tree-inventScroll/tree.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="树组件实现虚拟滚动"/></a><div class="content"><a class="title" href="/2021/07/20/tree-inventScroll/" title="树组件实现虚拟滚动">树组件实现虚拟滚动</a><time datetime="2021-07-19T16:15:01.000Z" title="Created 2021-07-20 00:15:01">2021-07-20</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2021/03/23/http/" title="http1.0/1.1/2.0区别"><img src="/2021/03/23/http/http.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="http1.0/1.1/2.0区别"/></a><div class="content"><a class="title" href="/2021/03/23/http/" title="http1.0/1.1/2.0区别">http1.0/1.1/2.0区别</a><time datetime="2021-03-23T15:40:51.000Z" title="Created 2021-03-23 23:40:51">2021-03-23</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2021/02/09/js-setInterval/" title="JS定时器不准确及解决方案"><img src="/2021/02/09/js-setInterval/setInterval.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="JS定时器不准确及解决方案"/></a><div class="content"><a class="title" href="/2021/02/09/js-setInterval/" title="JS定时器不准确及解决方案">JS定时器不准确及解决方案</a><time datetime="2021-02-09T07:12:45.000Z" title="Created 2021-02-09 15:12:45">2021-02-09</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2020/12/28/js-rgba/" title="16进制颜色转换RGB原理"><img src="/2020/12/28/js-rgba/rgba.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="16进制颜色转换RGB原理"/></a><div class="content"><a class="title" href="/2020/12/28/js-rgba/" title="16进制颜色转换RGB原理">16进制颜色转换RGB原理</a><time datetime="2020-12-28T03:59:48.000Z" title="Created 2020-12-28 11:59:48">2020-12-28</time></div></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2021 By HC-ZHAN</div><div class="framework-info"><span>Framework </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>Theme </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="Read Mode"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="Switch Between Light And Dark Mode"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="Toggle between single-column and double-column"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="Setting"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="Table Of Contents"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="Scroll To Comments"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="Back To Top"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><div class="js-pjax"><script>function loadValine () {
+  function initValine () {
+    let initData = {
+      el: '#vcomment',
+      appId: 'mpvHGAn0KBSGL4nUR3TCqdxc-gzGzoHsz',
+      appKey: 'mPvd4d8uiFpFwAG70uRIauwV',
+      placeholder: 'Please leave your footprints',
+      avatar: 'monsterid',
+      meta: 'nick,mail,link'.split(','),
+      pageSize: '10',
+      lang: 'en',
+      recordIP: false,
+      serverURLs: '',
+      emojiCDN: '',
+      emojiMaps: "",
+      enableQQ: false,
+      path: window.location.pathname,
+    }
+
+    if (true) { 
+      initData.requiredFields= ('nick,mail'.split(','))
+    }
+    
+    if (false) {
+      const otherData = false
+      initData = Object.assign({}, initData, otherData)
+    }
+    
+    const valine = new Valine(initData)
+  }
+
+  if (typeof Valine === 'function') initValine() 
+  else getScript('https://cdn.jsdelivr.net/npm/valine/dist/Valine.min.js').then(initValine)
+}
+
+if ('Valine' === 'Valine' || !false) {
+  if (false) btf.loadComment(document.querySelector('#vcomment'),loadValine)
+  else setTimeout(() => loadValine(), 0)
+} else {
+  function loadOtherComment () {
+    loadValine()
+  }
+}</script><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></div></body></html>
