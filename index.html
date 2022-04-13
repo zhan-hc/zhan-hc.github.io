@@ -98,7 +98,7 @@ const getScript = url => new Promise((resolve, reject) => {
   isHome: true,
   isHighlightShrink: false,
   isToc: false,
-  postUpdate: '2022-04-11 20:35:24'
+  postUpdate: '2022-04-14 01:09:00'
 }</script><noscript><style type="text/css">
   #nav {
     opacity: 1
@@ -174,46 +174,22 @@ if (asideStatus !== undefined) {
 12345678910111213var id = 1const obj = &#123;  id: 2,  foo: function () &#123;    setTimeout(() =&gt; &#123;      console.log(this.id)    &#125;, 1000)  &#125;&#125;const bar = obj.foobar() // 1obj.foo.call(obj) // 2
 
 为什么他们输出结果会不一致呢？
-不是说箭头函数不会被外部影响改变，call和apply方法对箭头函数无效 ...</div></div></div><div class="recent-post-item"><div class="post_cover right_radius"><a href="/2022/04/07/http-cache/" title="浏览器缓存">     <img class="post_bg" src="/2022/04/07/http-cache/cache.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="浏览器缓存"></a></div><div class="recent-post-info"><a class="article-title" href="/2022/04/07/http-cache/" title="浏览器缓存">浏览器缓存</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">Created</span><time datetime="2022-04-07T14:07:14.000Z" title="Created 2022-04-07 22:07:14">2022-04-07</time></span><span class="article-meta"><span class="article-meta__separator">|</span><i class="fas fa-inbox article-meta__icon"></i><a class="article-meta__categories" href="/categories/%E5%89%8D%E7%AB%AF/">前端</a></span></div><div class="content">缓存的资源200 from memory cache不访问服务器，直接读缓存，从内存中读取缓存。此时的数据时缓存到内存中的，当kill进程后，也就是浏览器关闭以后，数据将不存在。但是这种方式只能缓存派生资源。
-200 from disk cache不访问服务器，直接读缓存，从磁盘中读取缓存，当kill进程时，数据还是存在。这种方式也只能缓存派生资源
+不是说箭头函数不会被外部影响改变，call和apply方法对箭头函数无效 ...</div></div></div><div class="recent-post-item"><div class="post_cover right_radius"><a href="/2022/04/07/http-cache/" title="浏览器缓存">     <img class="post_bg" src="/2022/04/07/http-cache/cache.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="浏览器缓存"></a></div><div class="recent-post-info"><a class="article-title" href="/2022/04/07/http-cache/" title="浏览器缓存">浏览器缓存</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">Created</span><time datetime="2022-04-07T14:07:14.000Z" title="Created 2022-04-07 22:07:14">2022-04-07</time></span><span class="article-meta"><span class="article-meta__separator">|</span><i class="fas fa-inbox article-meta__icon"></i><a class="article-meta__categories" href="/categories/%E5%89%8D%E7%AB%AF/">前端</a></span></div><div class="content">浏览器缓存（Browser Caching）是为了节约网络的资源加速浏览，浏览器在用户磁盘上对最近请求过的文档进行存储，当访问者再次请求这个页面时，浏览器就可以从本地磁盘显示文档，这样就可以加速页面的阅览。
+缓存资源缓存资源分为 memory cache（内存缓存） 和 disk cache（磁盘缓存） 
+memory cache
+不访问服务器，直接读缓存，从内存中读取缓存。此时的数据时缓存到内存中的，当kill进程后，也就是浏览器关闭以后，数据将不存在。但是这种方式只能缓存派生资源。
+
+
+我们经常看到的返回200显示from memory cache，其实就是取得是内存里的缓存
+disk cache
+不访问服务器，直接读缓存，从磁盘中读取缓存，当kill进程时，数据还是存在。这种方式也只能缓存派生资源
+
+
+当我们关闭页面，在缓存还未过期的时候访问的一些访问过的派生资源时，就显示200 from disk cache其实就是磁盘缓存
 三级缓存原理 (访问缓存优先级)
  先在内存中查找,如果有,直接加载。
  如果内存中不存在,则在硬盘中查找,如果有直接加载。
- 如果硬盘中也没有,那么就进行网络请求。
- 请求获取的资源缓存到硬盘和内存。
-
-强缓存强缓存主要包括 expires 和 cache-control。对比来加深理解
-
-
-
-区别
-expires
-cache-control
-
-
-
-http版本
-1.0
-1.1
-
-
-时间
-绝对时间
-相对时间
-
-
-优先级
-低于cache-control
-高于expires
-
-
-例子
-expires:Mar, 06 Apr 2020 10:47:02 GMT
-Cache-Control:max-age=3600
-
-
-代表意义(例子为例)
-资源 ...</div></div></div><div class="recent-post-item"><div class="post_cover left_radius"><a href="/2022/04/06/js-promise/" title="彻底弄懂Promise，并带你手写">     <img class="post_bg" src="/2022/04/06/js-promise/promise.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="彻底弄懂Promise，并带你手写"></a></div><div class="recent-post-info"><a class="article-title" href="/2022/04/06/js-promise/" title="彻底弄懂Promise，并带你手写">彻底弄懂Promise，并带你手写</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">Created</span><time datetime="2022-04-06T07:59:58.000Z" title="Created 2022-04-06 15:59:58">2022-04-06</time></span><span class="article-meta"><span class="article-meta__separator">|</span><i class="fas fa-inbox article-meta__icon"></i><a class="article-meta__categories" href="/categories/%E5%89%8D%E7%AB%AF/">前端</a></span></div><div class="content">promise一个 Promise 必然处于以下几种状态之一：
+ 如果硬盘中也没有,那么就进 ...</div></div></div><div class="recent-post-item"><div class="post_cover left_radius"><a href="/2022/04/06/js-promise/" title="彻底弄懂Promise，并带你手写">     <img class="post_bg" src="/2022/04/06/js-promise/promise.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="彻底弄懂Promise，并带你手写"></a></div><div class="recent-post-info"><a class="article-title" href="/2022/04/06/js-promise/" title="彻底弄懂Promise，并带你手写">彻底弄懂Promise，并带你手写</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">Created</span><time datetime="2022-04-06T07:59:58.000Z" title="Created 2022-04-06 15:59:58">2022-04-06</time></span><span class="article-meta"><span class="article-meta__separator">|</span><i class="fas fa-inbox article-meta__icon"></i><a class="article-meta__categories" href="/categories/%E5%89%8D%E7%AB%AF/">前端</a></span></div><div class="content">promise一个 Promise 必然处于以下几种状态之一：
 
  等待（pending） : 初始状态，既没有被兑现，也没有被拒绝。
  成功（fulfilled） : 意味着操作成功完成。
@@ -298,4 +274,4 @@ HTTP1.0中存在一些浪费带宽的现象，例如客户端只是需要某个�
             <li class="card-category-list-item "><a class="card-category-list-link" href="/categories/%E5%89%8D%E7%AB%AF/"><span class="card-category-list-name">前端</span><span class="card-category-list-count">26</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/%E6%B5%8F%E8%A7%88%E5%99%A8/"><span class="card-category-list-name">浏览器</span><span class="card-category-list-count">1</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/%E7%AE%97%E6%B3%95/"><span class="card-category-list-name">算法</span><span class="card-category-list-count">4</span></a></li>
             
             </ul></div></div><div class="card-widget card-tags"><div class="card-content"><div class="item-headline"><i class="fas fa-tags"></i><span>Tags</span></div><div class="card-tag-cloud"><a href="/tags/Cookie/" style="font-size: 1.1em; color: #999">Cookie</a> <a href="/tags/array/" style="font-size: 1.18em; color: #999ca1">array</a> <a href="/tags/cache/" style="font-size: 1.1em; color: #999">cache</a> <a href="/tags/const/" style="font-size: 1.1em; color: #999">const</a> <a href="/tags/css/" style="font-size: 1.34em; color: #99a3b0">css</a> <a href="/tags/es6/" style="font-size: 1.26em; color: #999fa8">es6</a> <a href="/tags/flat/" style="font-size: 1.1em; color: #999">flat</a> <a href="/tags/float/" style="font-size: 1.1em; color: #999">float</a> <a href="/tags/function/" style="font-size: 1.1em; color: #999">function</a> <a href="/tags/http/" style="font-size: 1.26em; color: #999fa8">http</a> <a href="/tags/js/" style="font-size: 1.5em; color: #99a9bf">js</a> <a href="/tags/let/" style="font-size: 1.1em; color: #999">let</a> <a href="/tags/localStorage/" style="font-size: 1.1em; color: #999">localStorage</a> <a href="/tags/new/" style="font-size: 1.1em; color: #999">new</a> <a href="/tags/node/" style="font-size: 1.1em; color: #999">node</a> <a href="/tags/promise/" style="font-size: 1.1em; color: #999">promise</a> <a href="/tags/prototype/" style="font-size: 1.1em; color: #999">prototype</a> <a href="/tags/protptype/" style="font-size: 1.1em; color: #999">protptype</a> <a href="/tags/rgba/" style="font-size: 1.1em; color: #999">rgba</a> <a href="/tags/sessionStorage/" style="font-size: 1.1em; color: #999">sessionStorage</a> <a href="/tags/var/" style="font-size: 1.1em; color: #999">var</a> <a href="/tags/vue/" style="font-size: 1.42em; color: #99a6b7">vue</a> <a href="/tags/%E5%BF%AB%E6%8E%92/" style="font-size: 1.1em; color: #999">快排</a> <a href="/tags/%E6%8E%92%E5%BA%8F%E7%AE%97%E6%B3%95/" style="font-size: 1.1em; color: #999">排序算法</a> <a href="/tags/%E9%80%92%E5%BD%92/" style="font-size: 1.1em; color: #999">递归</a></div></div></div><div class="card-widget card-archives"><div class="card-content"><div class="item-headline"><i class="fas fa-archive"></i><span>Archives</span></div><ul class="card-archive-list"><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2022/04/"><span class="card-archive-list-date">April 2022</span><span class="card-archive-list-count">3</span></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2021/12/"><span class="card-archive-list-date">December 2021</span><span class="card-archive-list-count">2</span></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2021/11/"><span class="card-archive-list-date">November 2021</span><span class="card-archive-list-count">2</span></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2021/07/"><span class="card-archive-list-date">July 2021</span><span class="card-archive-list-count">1</span></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2021/03/"><span class="card-archive-list-date">March 2021</span><span class="card-archive-list-count">1</span></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2021/02/"><span class="card-archive-list-date">February 2021</span><span class="card-archive-list-count">1</span></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2020/12/"><span class="card-archive-list-date">December 2020</span><span class="card-archive-list-count">6</span></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2020/08/"><span class="card-archive-list-date">August 2020</span><span class="card-archive-list-count">6</span></a></li><li class="card-archive-list-item more is-center"><a class="card-archive-list-link-more" href="/archives/">
-              <span>More</span><i class="fas fa-angle-right"  ></i></a></li></ul></div></div><div class="card-widget card-webinfo"><div class="card-content"><div class="item-headline"><i class="fas fa-chart-line"></i><span>Info</span></div><div class="webinfo"><div class="webinfo-item"><div class="item-name">Article :</div><div class="item-count">31</div></div><div class="webinfo-item"><div class="item-name">UV :</div><div class="item-count" id="busuanzi_value_site_uv"></div></div><div class="webinfo-item"><div class="item-name">PV :</div><div class="item-count" id="busuanzi_value_site_pv"></div></div><div class="webinfo-item"><div class="item-name">Last Push :</div><div class="item-count" id="last-push-date" data-lastPushDate="2022-04-11T12:35:24.578Z"></div></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2022 By HC-ZHAN</div><div class="framework-info"><span>Framework </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>Theme </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="darkmode" type="button" title="Switch Between Light And Dark Mode"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="Toggle between single-column and double-column"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="Setting"><i class="fas fa-cog fa-spin"></i></button><button id="go-up" type="button" title="Back To Top"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><div class="js-pjax"><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></div></body></html>
+              <span>More</span><i class="fas fa-angle-right"  ></i></a></li></ul></div></div><div class="card-widget card-webinfo"><div class="card-content"><div class="item-headline"><i class="fas fa-chart-line"></i><span>Info</span></div><div class="webinfo"><div class="webinfo-item"><div class="item-name">Article :</div><div class="item-count">31</div></div><div class="webinfo-item"><div class="item-name">UV :</div><div class="item-count" id="busuanzi_value_site_uv"></div></div><div class="webinfo-item"><div class="item-name">PV :</div><div class="item-count" id="busuanzi_value_site_pv"></div></div><div class="webinfo-item"><div class="item-name">Last Push :</div><div class="item-count" id="last-push-date" data-lastPushDate="2022-04-13T17:08:59.677Z"></div></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2022 By HC-ZHAN</div><div class="framework-info"><span>Framework </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>Theme </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="darkmode" type="button" title="Switch Between Light And Dark Mode"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="Toggle between single-column and double-column"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="Setting"><i class="fas fa-cog fa-spin"></i></button><button id="go-up" type="button" title="Back To Top"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><div class="js-pjax"><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></div></body></html>
